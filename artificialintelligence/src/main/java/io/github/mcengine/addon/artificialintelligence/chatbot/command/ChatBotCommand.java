@@ -1,26 +1,16 @@
 package io.github.mcengine.addon.artificialintelligence.chatbot.command;
 
-import io.github.mcengine.api.artificialintelligence.MCEngineArtificialIntelligenceApi;
-import io.github.mcengine.api.artificialintelligence.addon.IMCEngineArtificialIntelligenceAddOn;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * Command to interact with chatbot: /chatbot {platform} {model}
+ * Command to interact with chatbot: /chatbot {platform} {model} {message...}
  */
 public class ChatBotCommand implements CommandExecutor {
 
-    /**
-     * Executes the /chatbot command to interact with the AI.
-     *
-     * @param sender  The sender of the command.
-     * @param command The command that was executed.
-     * @param label   The alias of the command used.
-     * @param args    The arguments passed with the command.
-     * @return true if the command was processed; false otherwise.
-     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
@@ -29,7 +19,7 @@ public class ChatBotCommand implements CommandExecutor {
         }
 
         if (args.length < 3) {
-            sender.sendMessage("§cUsage: /chatbot {platform} {model} {message...}");
+            player.sendMessage("§cUsage: /chatbot {platform} {model} {message...}");
             return true;
         }
 
@@ -37,17 +27,11 @@ public class ChatBotCommand implements CommandExecutor {
         String model = args[1];
         String message = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length));
 
-        MCEngineArtificialIntelligenceApi api = MCEngineArtificialIntelligenceApi.getApi();
-        String response;
+        player.sendMessage("§7[ChatBot] Thinking...");
 
-        try {
-            response = api.getResponse(platform, model, message);
-        } catch (Exception e) {
-            sender.sendMessage("§cFailed to get response from chatbot: " + e.getMessage());
-            return true;
-        }
-
-        sender.sendMessage("§e[ChatBot]§r " + response);
+        new ChatBotTask(Bukkit.getPluginManager().getPlugin("MCEngineArtificialIntelligence"),
+                        player, platform, model, message)
+                .runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("MCEngineArtificialIntelligence"));
         return true;
     }
 }

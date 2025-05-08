@@ -1,4 +1,4 @@
-rootProject.name = 'mcengine-artificialintelligence-addon-chat-bot'
+rootProject.name = 'chat-bot'
 
 // Define base directories for subprojects
 def coreProjects = ['artificialintelligence']

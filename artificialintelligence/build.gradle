@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT'
+
+    compileOnly 'io.github.mcengine:mcengine-artificialintelligence-api:1.0.0-RELEASE'
+}
+
+shadowJar {
+    archiveBaseName = "${project.jarName}-artificialintelligence"
+}

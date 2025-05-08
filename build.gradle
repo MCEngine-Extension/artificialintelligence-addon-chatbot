@@ -36,7 +36,7 @@ ext {
     git_user_token = envVars['GIT_USER_TOKEN'] ?: System.getenv('GIT_USER_TOKEN') ?: 'null'
 
     /* Project Information */
-    jarName = envVars['PROJECT_NAME'] ?: System.getenv('PROJECT_NAME') ?: 'MCEngineArtificialIntelligenceAddOnChatBot'
+    jarName = envVars['PROJECT_NAME'] ?: System.getenv('PROJECT_NAME') ?: 'Chat-Bot'
 }
 
 allprojects {
@@ -59,6 +59,14 @@ allprojects {
 
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'https://oss.sonatype.org/content/repositories/central' }
+
+        maven {
+            url = uri('https://maven.pkg.github.com/MCEngine/artificialintelligence')
+            credentials {
+                username = envVars['GIT_USER_NAME'] ?: System.getenv('GIT_USER_NAME') ?: 'null'
+                password = envVars['GIT_USER_TOKEN'] ?: System.getenv('GIT_USER_TOKEN') ?: 'null'
+            }
+        }
     }
 }
 

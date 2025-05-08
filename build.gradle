@@ -1,0 +1,104 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'java'
+}
+
+def loadEnvFile(String path) {
+    def env = [:]
+    def file = file(path)
+    if (file.exists()) {
+        file.eachLine { line ->
+            if (line && line.contains('=') && !line.startsWith('#')) {
+                def (key, value) = line.split('=', 2)
+                env[key.trim()] = value.trim()
+            }
+        }
+    }
+    return env
+}
+
+// 🔁 Load multiple env files in order
+def envFilesToLoad = ['.env']
+def envVars = [:]
+envFilesToLoad.each { envFile ->
+    envVars.putAll(loadEnvFile(envFile))
+}
+
+// Set project version using a property, defaulting to 'unspecified' if not found
+version = project.properties[project.name + '.version'] ?: 'undefined'
+group = 'io.github.mcengine'
+
+ext {
+    /* Name */
+    git_user_name = envVars['GIT_USER_NAME'] ?: System.getenv('GIT_USER_NAME') ?: 'null'
+
+    /* Token */
+    git_user_token = envVars['GIT_USER_TOKEN'] ?: System.getenv('GIT_USER_TOKEN') ?: 'null'
+
+    /* Project Information */
+    jarName = envVars['PROJECT_NAME'] ?: System.getenv('PROJECT_NAME') ?: 'MCEngineArtificialIntelligenceAddOnChatBot'
+}
+
+allprojects {
+    group = 'io.github.mcengine'
+
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+
+        maven {
+            url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
+            content {
+                includeGroup 'org.bukkit'
+                includeGroup 'org.spigotmc'
+            }
+        }
+
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'https://oss.sonatype.org/content/repositories/central' }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    def versionPropertyKey = project.path.replace(':', '-')
+    if (versionPropertyKey.startsWith('-')) {
+        versionPropertyKey = versionPropertyKey.substring(1)
+    }
+
+    if (!versionPropertyKey.contains('-')) {
+        versionPropertyKey = project.name
+    }
+
+    versionPropertyKey += '.version'
+    version = project.properties[versionPropertyKey] ?: 'undefined'
+
+    tasks.named('jar').configure {
+        enabled = false
+    }
+
+    tasks.named('shadowJar').configure {
+        archiveClassifier = null
+    }
+}
+
+dependencies {
+    implementation project(path: ":artificialintelligence", configuration: 'shadow')
+}
+
+shadowJar {
+    version = version
+    archiveClassifier = null
+    archiveBaseName = project.jarName
+}
+
+tasks.named('jar').configure {
+    enabled = false
+}
+
+build.dependsOn(shadowJar)

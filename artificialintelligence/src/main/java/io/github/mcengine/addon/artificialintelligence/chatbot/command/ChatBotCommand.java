@@ -1,13 +1,13 @@
 package io.github.mcengine.addon.artificialintelligence.chatbot.command;
 
-import org.bukkit.Bukkit;
+import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * Command to interact with chatbot: /chatbot {platform} {model} {message...}
+ * Command to start AI conversation: /ai {platform} {model}
  */
 public class ChatBotCommand implements CommandExecutor {
 
@@ -18,20 +18,20 @@ public class ChatBotCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length < 3) {
-            player.sendMessage("§cUsage: /chatbot {platform} {model} {message...}");
+        if (args.length < 2) {
+            player.sendMessage("§cUsage: /ai {platform} {model}");
             return true;
         }
 
         String platform = args[0];
         String model = args[1];
-        String message = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length));
 
-        player.sendMessage("§7[ChatBot] Thinking...");
+        ChatBotManager.setModel(player, platform, model);
+        ChatBotManager.startConversation(player);
+        ChatBotManager.activate(player);
 
-        new ChatBotTask(Bukkit.getPluginManager().getPlugin("MCEngineArtificialIntelligence"),
-                        player, platform, model, message)
-                .runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("MCEngineArtificialIntelligence"));
+        player.sendMessage("§aYou are now chatting with the AI.");
+        player.sendMessage("§7Type your message in chat. Type 'quit' to end the conversation.");
         return true;
     }
 }

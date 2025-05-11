@@ -23,6 +23,12 @@ public class ChatBotManager {
     /** Tracks players who are waiting for AI response */
     private static final Set<UUID> waitingPlayers = ConcurrentHashMap.newKeySet();
 
+    /** Stores the selected AI platform for each player (e.g., gpt, deepseek) */
+    private static final Map<UUID, String> playerPlatform = new ConcurrentHashMap<>();
+
+    /** Stores the selected AI model for each player (e.g., gpt-4o) */
+    private static final Map<UUID, String> playerModel = new ConcurrentHashMap<>();
+
     /**
      * Starts a new conversation session for a player.
      * @param player The player starting a conversation.
@@ -93,6 +99,7 @@ public class ChatBotManager {
         end(player);
         deactivate(player);
         setWaiting(player, false);
+        clearModel(player);
     }
 
     /**
@@ -118,6 +125,44 @@ public class ChatBotManager {
     }
 
     /**
+     * Sets the selected AI platform and model for a player.
+     * @param player The player.
+     * @param platform The platform name (e.g., gpt, deepseek).
+     * @param model The model name (e.g., gpt-4o).
+     */
+    public static void setModel(Player player, String platform, String model) {
+        playerPlatform.put(player.getUniqueId(), platform);
+        playerModel.put(player.getUniqueId(), model);
+    }
+
+    /**
+     * Gets the selected AI platform for a player.
+     * @param player The player.
+     * @return The platform name, or "gpt" if not set.
+     */
+    public static String getPlatform(Player player) {
+        return playerPlatform.getOrDefault(player.getUniqueId(), "gpt");
+    }
+
+    /**
+     * Gets the selected AI model for a player.
+     * @param player The player.
+     * @return The model name, or "gpt-4o" if not set.
+     */
+    public static String getModel(Player player) {
+        return playerModel.getOrDefault(player.getUniqueId(), "gpt-4o");
+    }
+
+    /**
+     * Clears the AI model and platform setting for a player.
+     * @param player The player.
+     */
+    public static void clearModel(Player player) {
+        playerPlatform.remove(player.getUniqueId());
+        playerModel.remove(player.getUniqueId());
+    }
+
+    /**
      * Terminates all active conversations and notifies online players.
      * Used during plugin disable or reload.
      */
@@ -129,10 +174,10 @@ public class ChatBotManager {
                 player.sendMessage("§cYour AI session has ended due to the plugin being reloaded or disabled.");
             }
         }
-
-        // Fallback cleanup
         playerConversations.clear();
         activePlayers.clear();
         waitingPlayers.clear();
+        playerPlatform.clear();
+        playerModel.clear();
     }
 }

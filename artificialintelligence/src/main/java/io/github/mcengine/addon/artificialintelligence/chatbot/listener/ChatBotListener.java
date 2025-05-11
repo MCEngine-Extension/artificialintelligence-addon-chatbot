@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Listens to chat messages from players currently in an AI conversation.
@@ -58,7 +57,6 @@ public class ChatBotListener implements Listener {
         }
 
         player.sendMessage(ChatColor.GRAY + "[You → AI]: " + ChatColor.WHITE + message);
-        ChatBotManager.append(player, "[Player]: " + message);
         ChatBotManager.setWaiting(player, true);
 
         String platform = ChatBotManager.getPlatform(player);

@@ -43,18 +43,24 @@ public class ChatBotTask extends BukkitRunnable {
         String response;
 
         try {
-            response = api.getResponse(platform, model, message);
+            // Use entire chat history as prompt
+            String fullPrompt = ChatBotManager.get(player) + "[Player]: " + message;
+            response = api.getResponse(platform, model, fullPrompt);
         } catch (Exception e) {
             Bukkit.getScheduler().runTask(plugin, () ->
                 player.sendMessage("§c[ChatBot] Failed: " + e.getMessage())
             );
-            ChatBotManager.setWaiting(player, false); // prevent lock
+            ChatBotManager.setWaiting(player, false);
             return;
         }
 
+        String playerPrompt = "[Player]: " + message;
+        String aiReply = "[Ai]: " + response;
+
         Bukkit.getScheduler().runTask(plugin, () -> {
             player.sendMessage("§e[ChatBot]§r " + response);
-            ChatBotManager.append(player, "[AI]: " + response);
+            ChatBotManager.append(player, playerPrompt);
+            ChatBotManager.append(player, aiReply);
             ChatBotManager.setWaiting(player, false);
         });
     }

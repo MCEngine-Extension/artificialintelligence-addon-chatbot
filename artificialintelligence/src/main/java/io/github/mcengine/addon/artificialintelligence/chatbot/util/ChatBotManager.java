@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Manages AI chat conversations for each player.
  * Tracks active conversations, waiting status, and session termination.
  */
-public class ChatManager {
+public class ChatBotManager {
 
     /** Stores the conversation history for each player */
     private static final Map<UUID, StringBuilder> playerConversations = new ConcurrentHashMap<>();

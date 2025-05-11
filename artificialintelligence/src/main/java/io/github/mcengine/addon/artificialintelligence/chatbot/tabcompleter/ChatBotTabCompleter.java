@@ -2,8 +2,8 @@ package io.github.mcengine.addon.artificialintelligence.chatbot.tabcompleter;
 
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilAi;
 import org.bukkit.command.Command;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,12 +29,14 @@ public class ChatBotTabCompleter implements TabCompleter {
         Map<String, Map<String, ?>> models = MCEngineArtificialIntelligenceApiUtilAi.getAllModels();
 
         if (args.length == 1) {
+            // Suggest available platforms
             List<String> platforms = new ArrayList<>(models.keySet());
             Collections.sort(platforms);
             return platforms;
         }
 
         if (args.length == 2) {
+            // Suggest models for the given platform
             String platform = args[0];
             if (!models.containsKey(platform)) return Collections.emptyList();
 

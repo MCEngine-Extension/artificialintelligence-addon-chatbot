@@ -8,12 +8,12 @@ import org.bukkit.entity.Player;
 
 /**
  * Command to start an AI chat session.
- * Usage: /ai {platform} {model}
+ * Usage: /chatbot {platform} {model}
  */
 public class ChatBotCommand implements CommandExecutor {
 
     /**
-     * Handles the /ai command to initiate a conversation.
+     * Handles the /chatbot command to initiate a conversation.
      *
      * @param sender  The command sender.
      * @param command The command object.
@@ -29,7 +29,7 @@ public class ChatBotCommand implements CommandExecutor {
         }
 
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /ai {platform} {model}");
+            player.sendMessage("§cUsage: /chatbot {platform} {model}");
             return true;
         }
 

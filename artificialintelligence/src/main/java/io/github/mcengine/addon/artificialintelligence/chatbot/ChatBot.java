@@ -34,7 +34,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
      */
     @Override
     public void onLoad(Plugin plugin) {
-        MCEngineArtificialIntelligenceAddOnLogger logger = new MCEngineArtificialIntelligenceAddOnLogger(plugin, "ChatBot");
+        MCEngineArtificialIntelligenceAddOnLogger logger = new MCEngineArtificialIntelligenceAddOnLogger(plugin, "MCEngineChatBot");
 
         try {
             // Reflectively access Bukkit's CommandMap

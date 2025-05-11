@@ -2,8 +2,6 @@ package io.github.mcengine.addon.artificialintelligence.chatbot.listener;
 
 import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotTask;
 import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotManager;
-import io.github.mcengine.api.artificialintelligence.MCEngineArtificialIntelligenceApi;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,17 +10,32 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+/**
+ * Listens to chat messages from players currently in an AI conversation.
+ * Cancels public chat and forwards input to the chatbot task.
+ */
 public class ChatBotListener implements Listener {
 
     private final Plugin plugin;
 
+    /**
+     * Constructor for ChatBotListener.
+     *
+     * @param plugin The main plugin instance.
+     */
     public ChatBotListener(Plugin plugin) {
         this.plugin = plugin;
     }
 
+    /**
+     * Intercepts player chat to handle AI conversation logic.
+     *
+     * @param event The AsyncPlayerChatEvent.
+     */
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+
         if (!ChatBotManager.isActive(player)) return;
 
         event.setCancelled(true);

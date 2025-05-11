@@ -7,7 +7,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * Async task to call the AI API and respond to the player.
+ * Async task that sends player input to the AI API and sends the response back.
  */
 public class ChatBotTask extends BukkitRunnable {
 
@@ -17,6 +17,15 @@ public class ChatBotTask extends BukkitRunnable {
     private final String model;
     private final String message;
 
+    /**
+     * Constructs a new ChatBotTask.
+     *
+     * @param plugin   The plugin instance.
+     * @param player   The player in conversation.
+     * @param platform The AI platform to use.
+     * @param model    The model name to use.
+     * @param message  The message sent by the player.
+     */
     public ChatBotTask(Plugin plugin, Player player, String platform, String model, String message) {
         this.plugin = plugin;
         this.player = player;
@@ -25,21 +34,28 @@ public class ChatBotTask extends BukkitRunnable {
         this.message = message;
     }
 
+    /**
+     * Executes the API call and sends the response back to the player.
+     */
     @Override
     public void run() {
         MCEngineArtificialIntelligenceApi api = MCEngineArtificialIntelligenceApi.getApi();
         String response;
+
         try {
             response = api.getResponse(platform, model, message);
         } catch (Exception e) {
             Bukkit.getScheduler().runTask(plugin, () ->
                 player.sendMessage("§c[ChatBot] Failed: " + e.getMessage())
             );
+            ChatBotManager.setWaiting(player, false); // prevent lock
             return;
         }
 
-        Bukkit.getScheduler().runTask(plugin, () ->
-            player.sendMessage("§e[ChatBot]§r " + response)
-        );
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            player.sendMessage("§e[ChatBot]§r " + response);
+            ChatBotManager.append(player, "[AI]: " + response);
+            ChatBotManager.setWaiting(player, false);
+        });
     }
 }

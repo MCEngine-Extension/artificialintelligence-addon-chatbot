@@ -7,10 +7,20 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * Command to start AI conversation: /ai {platform} {model}
+ * Command to start an AI chat session.
+ * Usage: /ai {platform} {model}
  */
 public class ChatBotCommand implements CommandExecutor {
 
+    /**
+     * Handles the /ai command to initiate a conversation.
+     *
+     * @param sender  The command sender.
+     * @param command The command object.
+     * @param label   The label used.
+     * @param args    The arguments provided.
+     * @return true if the command was handled.
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {

@@ -1,6 +1,8 @@
 package io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling;
 
+import io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling.json.FunctionCallingJson;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -9,16 +11,11 @@ public class FunctionCallingLoader {
 
     private final List<FunctionRule> mergedRules = new ArrayList<>();
 
-    public FunctionCallingLoader() {
-        // Example rules — replace with file or DB load
-        mergedRules.add(new FunctionRule(
-                Arrays.asList("hello", "hi", "hey"),
-                "Hello {player_name}, how can I assist you today?"
-        ));
-        mergedRules.add(new FunctionRule(
-                Collections.singletonList("what time is it"),
-                "Server time is {time_server}, UTC time is {time_utc}."
-        ));
+    public FunctionCallingLoader(Plugin plugin) {
+        IFunctionCallingLoader loader = new FunctionCallingJson(
+                new java.io.File(plugin.getDataFolder(), "addons/MCEngineChatBot/data/")
+        );
+        mergedRules.addAll(loader.loadFunctionRules());
     }
 
     public List<String> match(Player player, String input) {

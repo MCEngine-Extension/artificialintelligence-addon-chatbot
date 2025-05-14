@@ -29,7 +29,7 @@ public class ChatBotListener implements Listener {
      */
     public ChatBotListener(Plugin plugin) {
         this.plugin = plugin;
-        this.functionCallingLoader = new FunctionCallingLoader();
+        this.functionCallingLoader = new FunctionCallingLoader(plugin);
     }
 
     /**

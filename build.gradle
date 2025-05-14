@@ -54,34 +54,13 @@ allprojects {
     }
 }
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'com.github.johnrengelman.shadow'
-
-    def versionPropertyKey = project.path.replace(':', '-')
-    if (versionPropertyKey.startsWith('-')) {
-        versionPropertyKey = versionPropertyKey.substring(1)
-    }
-
-    if (!versionPropertyKey.contains('-')) {
-        versionPropertyKey = project.name
-    }
-
-    versionPropertyKey += '.version'
-    version = project.properties[versionPropertyKey] ?: 'undefined'
-
-    tasks.named('jar').configure {
-        enabled = false
-    }
-
-    tasks.named('shadowJar').configure {
-        archiveClassifier = null
-    }
-}
-
 dependencies {
     implementation project(path: ":mcengine-chat-bot-api", configuration: 'shadow')
-    implementation project(path: ":artificialintelligence", configuration: 'shadow')
+
+    compileOnly 'io.github.mcengine:mcengine-api:1.0.0-1-SNAPSHOT'
+    compileOnly 'io.github.mcengine:mcengine-artificialintelligence-api:1.0.0-2-SNAPSHOT'
+
+    compileOnly 'org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT'
 }
 
 shadowJar {

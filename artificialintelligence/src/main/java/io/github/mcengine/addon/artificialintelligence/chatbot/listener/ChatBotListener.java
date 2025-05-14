@@ -51,9 +51,9 @@ public class ChatBotListener implements Listener {
             return;
         }
 
-        String message = event.getMessage().trim();
+        String originalMessage = event.getMessage().trim();
 
-        if (message.equalsIgnoreCase("quit")) {
+        if (originalMessage.equalsIgnoreCase("quit")) {
             ChatBotManager.terminate(player);
             Bukkit.getScheduler().runTask(plugin, () ->
                     player.sendMessage(ChatColor.RED + "❌ AI conversation ended.")
@@ -61,23 +61,24 @@ public class ChatBotListener implements Listener {
             return;
         }
 
-        player.sendMessage(ChatColor.GRAY + "[You → AI]: " + ChatColor.WHITE + message);
+        player.sendMessage(ChatColor.GRAY + "[You → AI]: " + ChatColor.WHITE + originalMessage);
 
-        List<String> matchedResponses = functionCallingLoader.match(player, message);
+        List<String> matchedResponses = functionCallingLoader.match(player, originalMessage);
+        String finalMessage = originalMessage;
+
         if (!matchedResponses.isEmpty()) {
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                for (String response : matchedResponses) {
-                    player.sendMessage(ChatColor.GREEN + "[AI]: " + ChatColor.WHITE + response);
-                }
-            });
-            return;
+            // Append all matched function responses into the prompt
+            StringBuilder sb = new StringBuilder(originalMessage).append("\n\n[Function Info]\n");
+            for (String response : matchedResponses) {
+                sb.append("- ").append(response).append("\n");
+            }
+            finalMessage = sb.toString();
         }
 
         ChatBotManager.setWaiting(player, true);
-
         String platform = ChatBotManager.getPlatform(player);
         String model = ChatBotManager.getModel(player);
 
-        new ChatBotTask(plugin, player, platform, model, message).runTaskAsynchronously(plugin);
+        new ChatBotTask(plugin, player, platform, model, finalMessage).runTaskAsynchronously(plugin);
     }
 }

@@ -3,40 +3,17 @@ plugins {
     id 'java'
 }
 
-def loadEnvFile(String path) {
-    def env = [:]
-    def file = file(path)
-    if (file.exists()) {
-        file.eachLine { line ->
-            if (line && line.contains('=') && !line.startsWith('#')) {
-                def (key, value) = line.split('=', 2)
-                env[key.trim()] = value.trim()
-            }
-        }
-    }
-    return env
-}
-
-// 🔁 Load multiple env files in order
-def envFilesToLoad = ['.env']
-def envVars = [:]
-envFilesToLoad.each { envFile ->
-    envVars.putAll(loadEnvFile(envFile))
-}
-
 // Set project version using a property, defaulting to 'unspecified' if not found
 version = project.properties[project.name + '.version'] ?: 'undefined'
 group = 'io.github.mcengine'
 
 ext {
-    /* Name */
-    git_user_name = envVars['GIT_USER_NAME'] ?: System.getenv('GIT_USER_NAME') ?: 'null'
-
-    /* Token */
-    git_user_token = envVars['GIT_USER_TOKEN'] ?: System.getenv('GIT_USER_TOKEN') ?: 'null'
+    /* User */
+    git_user_name = System.getenv('GIT_USER_NAME') ?: 'null'
+    git_user_token = System.getenv('GIT_USER_TOKEN') ?: 'null'
 
     /* Project Information */
-    jarName = envVars['PROJECT_NAME'] ?: System.getenv('PROJECT_NAME') ?: 'Chat-Bot'
+    jarName = System.getenv('PROJECT_NAME') ?: 'MCEngine-Chat-Bot'
 }
 
 allprojects {
@@ -63,8 +40,8 @@ allprojects {
         maven {
             url = uri('https://maven.pkg.github.com/MCEngine/artificialintelligence')
             credentials {
-                username = envVars['GIT_USER_NAME'] ?: System.getenv('GIT_USER_NAME') ?: 'null'
-                password = envVars['GIT_USER_TOKEN'] ?: System.getenv('GIT_USER_TOKEN') ?: 'null'
+                username = project.git_user_name ?: 'null'
+                password = project.git_user_token ?: 'null'
             }
         }
     }
@@ -96,6 +73,7 @@ subprojects {
 }
 
 dependencies {
+    implementation project(path: ":mcengine-chat-bot-api", configuration: 'shadow')
     implementation project(path: ":artificialintelligence", configuration: 'shadow')
 }
 

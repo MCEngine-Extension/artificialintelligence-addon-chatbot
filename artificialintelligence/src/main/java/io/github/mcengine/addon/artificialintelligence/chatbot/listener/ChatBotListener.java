@@ -2,6 +2,7 @@ package io.github.mcengine.addon.artificialintelligence.chatbot.listener;
 
 import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotTask;
 import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotManager;
+import io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling.FunctionCallingLoader;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +11,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.Bukkit;
 
+import java.util.List;
+
 /**
  * Listens to chat messages from players currently in an AI conversation.
  * Cancels public chat and forwards input to the chatbot task.
@@ -17,6 +20,7 @@ import org.bukkit.Bukkit;
 public class ChatBotListener implements Listener {
 
     private final Plugin plugin;
+    private final FunctionCallingLoader functionCallingLoader;
 
     /**
      * Constructor for ChatBotListener.
@@ -25,6 +29,7 @@ public class ChatBotListener implements Listener {
      */
     public ChatBotListener(Plugin plugin) {
         this.plugin = plugin;
+        this.functionCallingLoader = new FunctionCallingLoader();
     }
 
     /**
@@ -51,12 +56,23 @@ public class ChatBotListener implements Listener {
         if (message.equalsIgnoreCase("quit")) {
             ChatBotManager.terminate(player);
             Bukkit.getScheduler().runTask(plugin, () ->
-                player.sendMessage(ChatColor.RED + "❌ AI conversation ended.")
+                    player.sendMessage(ChatColor.RED + "❌ AI conversation ended.")
             );
             return;
         }
 
         player.sendMessage(ChatColor.GRAY + "[You → AI]: " + ChatColor.WHITE + message);
+
+        List<String> matchedResponses = functionCallingLoader.match(player, message);
+        if (!matchedResponses.isEmpty()) {
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                for (String response : matchedResponses) {
+                    player.sendMessage(ChatColor.GREEN + "[AI]: " + ChatColor.WHITE + response);
+                }
+            });
+            return;
+        }
+
         ChatBotManager.setWaiting(player, true);
 
         String platform = ChatBotManager.getPlatform(player);

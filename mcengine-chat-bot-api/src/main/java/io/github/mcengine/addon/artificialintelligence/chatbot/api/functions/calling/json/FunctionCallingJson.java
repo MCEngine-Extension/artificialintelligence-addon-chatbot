@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * Loads function calling rules recursively from all `data.json` files under the specified root folder.
- * If none exist, creates a default `data.json` with basic example rules.
+ * If the directory does not exist, creates it and writes default data.json.
  */
 public class FunctionCallingJson implements IFunctionCallingLoader {
 
@@ -73,33 +73,52 @@ public class FunctionCallingJson implements IFunctionCallingLoader {
 
     private void ensureDefaultDataJsonExists() {
         try {
+            File defaultFile = new File(rootFolder, "data.json");
+
+            // If folder doesn't exist at all, create it and data.json
             if (!rootFolder.exists()) {
-                rootFolder.mkdirs();
+                if (rootFolder.mkdirs()) {
+                    writeDefaultDataJson(defaultFile);
+                }
             }
 
-            File defaultFile = new File(rootFolder, "data.json");
-            if (!defaultFile.exists()) {
-                List<FunctionRule> defaultRules = Arrays.asList(
-                        new FunctionRule(
-                                Arrays.asList("What game am I playing right now?", "Which game am I currently playing?"),
-                                "You are playing Minecraft right now."
-                        ),
-                        new FunctionRule(
-                                Arrays.asList("What plugin is this?", "Which plugin is running?"),
-                                "This plugin is MCEngine Artificial Intelligence."
-                        )
-                );
-
-                try (FileWriter writer = new FileWriter(defaultFile)) {
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    gson.toJson(defaultRules, writer);
-                    System.out.println("✅ Created default function rules at: " + defaultFile.getPath());
-                }
+            // If folder exists but data.json does not, do NOT write anything
+            // This avoids overwriting or interfering with existing sub-data folders
+            if (rootFolder.exists() && !defaultFile.exists() && isFolderEmpty(rootFolder)) {
+                writeDefaultDataJson(defaultFile);
             }
 
         } catch (Exception e) {
             System.err.println("⚠️ Failed to create default data.json in: " + rootFolder.getPath());
             e.printStackTrace();
         }
+    }
+
+    private void writeDefaultDataJson(File file) {
+        try (FileWriter writer = new FileWriter(file)) {
+            List<FunctionRule> defaultRules = Arrays.asList(
+                    new FunctionRule(
+                            Arrays.asList("What game am I playing right now?", "Which game am I currently playing?"),
+                            "You are playing Minecraft right now."
+                    ),
+                    new FunctionRule(
+                            Arrays.asList("What plugin is this?", "Which plugin is running?"),
+                            "This plugin is MCEngine Artificial Intelligence."
+                    )
+            );
+
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(defaultRules, writer);
+            System.out.println("✅ Created default function rules at: " + file.getPath());
+
+        } catch (Exception e) {
+            System.err.println("⚠️ Could not write default data.json to: " + file.getPath());
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isFolderEmpty(File folder) {
+        File[] files = folder.listFiles();
+        return files == null || files.length == 0;
     }
 }

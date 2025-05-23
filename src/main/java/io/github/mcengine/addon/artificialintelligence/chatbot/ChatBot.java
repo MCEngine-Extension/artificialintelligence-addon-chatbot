@@ -1,6 +1,6 @@
 package io.github.mcengine.addon.artificialintelligence.chatbot;
 
-import io.github.mcengine.api.mcengine.addon.*;
+import io.github.mcengine.api.artificialintelligence.addon.*;
 import io.github.mcengine.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.addon.artificialintelligence.chatbot.listener.ChatBotListener;
 import io.github.mcengine.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
@@ -26,7 +26,7 @@ import java.util.List;
  *     /chatbot {platform} {model} {message...}
  * </pre>
  */
-public class ChatBot implements IMCEngineAddOn {
+public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
 
     /**
      * Invoked by the core plugin to initialize this AddOn.
@@ -35,7 +35,7 @@ public class ChatBot implements IMCEngineAddOn {
      */
     @Override
     public void onLoad(Plugin plugin) {
-        MCEngineAddOnLogger logger = new MCEngineAddOnLogger(plugin, "MCEngineChatBot");
+        MCEngineArtificialIntelligenceAddOnLogger logger = new MCEngineArtificialIntelligenceAddOnLogger(plugin, "MCEngineChatBot");
 
         try {
             // Register listener

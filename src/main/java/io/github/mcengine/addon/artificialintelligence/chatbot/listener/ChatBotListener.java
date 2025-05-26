@@ -1,7 +1,7 @@
 package io.github.mcengine.addon.artificialintelligence.chatbot.listener;
 
-import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotTask;
-import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotManager;
+import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotTask;
+import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling.FunctionCallingLoader;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -41,12 +41,12 @@ public class ChatBotListener implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
-        if (!ChatBotManager.isActive(player)) return;
+        if (!MCEngineArtificialIntelligenceApiUtilBotManager.isActive(player)) return;
 
         event.setCancelled(true);
         event.getRecipients().clear();
 
-        if (ChatBotManager.isWaiting(player)) {
+        if (MCEngineArtificialIntelligenceApiUtilBotManager.isWaiting(player)) {
             player.sendMessage(ChatColor.RED + "⏳ Please wait for the AI to respond before sending another message.");
             return;
         }
@@ -54,7 +54,7 @@ public class ChatBotListener implements Listener {
         String originalMessage = event.getMessage().trim();
 
         if (originalMessage.equalsIgnoreCase("quit")) {
-            ChatBotManager.terminate(player);
+            MCEngineArtificialIntelligenceApiUtilBotManager.terminate(player);
             Bukkit.getScheduler().runTask(plugin, () ->
                     player.sendMessage(ChatColor.RED + "❌ AI conversation ended.")
             );
@@ -75,10 +75,10 @@ public class ChatBotListener implements Listener {
             finalMessage = sb.toString();
         }
 
-        ChatBotManager.setWaiting(player, true);
-        String platform = ChatBotManager.getPlatform(player);
-        String model = ChatBotManager.getModel(player);
+        MCEngineArtificialIntelligenceApiUtilBotManager.setWaiting(player, true);
+        String platform = MCEngineArtificialIntelligenceApiUtilBotManager.getPlatform(player);
+        String model = MCEngineArtificialIntelligenceApiUtilBotManager.getModel(player);
 
-        new ChatBotTask(plugin, player, platform, model, finalMessage).runTaskAsynchronously(plugin);
+        new MCEngineArtificialIntelligenceApiUtilBotTask(plugin, player, platform, model, finalMessage).runTaskAsynchronously(plugin);
     }
 }

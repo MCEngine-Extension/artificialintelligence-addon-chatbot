@@ -1,6 +1,6 @@
 package io.github.mcengine.addon.artificialintelligence.chatbot.command;
 
-import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotManager;
+import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,9 +36,9 @@ public class ChatBotCommand implements CommandExecutor {
         String platform = args[0];
         String model = args[1];
 
-        ChatBotManager.setModel(player, platform, model);
-        ChatBotManager.startConversation(player);
-        ChatBotManager.activate(player);
+        MCEngineArtificialIntelligenceApiUtilBotManager.setModel(player, platform, model);
+        MCEngineArtificialIntelligenceApiUtilBotManager.startConversation(player);
+        MCEngineArtificialIntelligenceApiUtilBotManager.activate(player);
 
         player.sendMessage("§aYou are now chatting with the AI.");
         player.sendMessage("§7Type your message in chat. Type 'quit' to end the conversation.");

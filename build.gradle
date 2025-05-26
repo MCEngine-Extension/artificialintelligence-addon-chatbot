@@ -59,6 +59,21 @@ allprojects {
     }
 }
 
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    version = project.properties[project.name + '.version'] ?: 'undefined'
+
+    tasks.named('jar').configure {
+        enabled = false
+    }
+
+    tasks.named('shadowJar').configure {
+        archiveClassifier = null
+    }
+}
+
 dependencies {
     implementation project(path: ":mcengine-chat-bot-api", configuration: 'shadow')
 

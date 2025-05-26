@@ -16,6 +16,11 @@ ext {
     jarName = System.getenv('PROJECT_NAME') ?: 'MCEngine-Chat-Bot'
 }
 
+def mcengineApiVersion = findProperty('mcengine-api.version') ?: 'undefined'
+def mcengineArtificialIntelligenceApiVersion = findProperty('mcengine-artificialintelligence-api.version') ?: 'undefined'
+
+def spigotmcApiVersion = findProperty('spigotmc-api.version') ?: 'undefined'
+
 allprojects {
     group = 'io.github.mcengine'
 
@@ -57,10 +62,10 @@ allprojects {
 dependencies {
     implementation project(path: ":mcengine-chat-bot-api", configuration: 'shadow')
 
-    compileOnly 'io.github.mcengine:mcengine-api:1.0.0-2-SNAPSHOT'
-    compileOnly 'io.github.mcengine:mcengine-artificialintelligence-api:1.0.0-3-SNAPSHOT'
+    compileOnly "io.github.mcengine:mcengine-api:$mcengineApiVersion"
+    compileOnly "io.github.mcengine:mcengine-artificialintelligence-api:$mcengineArtificialIntelligenceApiVersion"
 
-    compileOnly 'org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT'
+    compileOnly "org.spigotmc:spigot-api:$spigotmcApiVersion"
 }
 
 shadowJar {

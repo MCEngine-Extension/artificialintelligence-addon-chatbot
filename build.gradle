@@ -3,88 +3,55 @@ plugins {
     id 'java'
 }
 
-// Set project version using a property, defaulting to 'unspecified' if not found
 version = project.properties[project.name + '.version'] ?: 'undefined'
 group = 'io.github.mcengine'
 
 ext {
-    /* User */
     git_user_name = System.getenv('GIT_USER_NAME') ?: 'null'
     git_user_token = System.getenv('GIT_USER_TOKEN') ?: 'null'
-
-    /* Project Information */
     jarName = System.getenv('PROJECT_NAME') ?: 'MCEngine-Chat-Bot'
 }
 
 def mcengineApiVersion = findProperty('mcengine-api.version') ?: 'undefined'
 def mcengineArtificialIntelligenceApiVersion = findProperty('mcengine-artificialintelligence-api.version') ?: 'undefined'
-
 def spigotmcApiVersion = findProperty('spigotmc-api.version') ?: 'undefined'
 
-allprojects {
-    group = 'io.github.mcengine'
-
-    apply plugin: 'java'
-    apply plugin: 'com.github.johnrengelman.shadow'
-
-    repositories {
-        mavenCentral()
-        mavenLocal()
-
-        maven {
-            url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
-            content {
-                includeGroup 'org.bukkit'
-                includeGroup 'org.spigotmc'
-            }
-        }
-
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-        maven { url 'https://oss.sonatype.org/content/repositories/central' }
-
-        maven {
-            url = uri('https://maven.pkg.github.com/MCEngine/mcengine')
-            credentials {
-                username = project.git_user_name ?: 'null'
-                password = project.git_user_token ?: 'null'
-            }
-        }
-        maven {
-            url = uri('https://maven.pkg.github.com/MCEngine/artificialintelligence')
-            credentials {
-                username = project.git_user_name ?: 'null'
-                password = project.git_user_token ?: 'null'
-            }
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
         }
     }
-}
-
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'com.github.johnrengelman.shadow'
-
-    version = project.properties[project.name + '.version'] ?: 'undefined'
-
-    tasks.named('jar').configure {
-        enabled = false
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://oss.sonatype.org/content/repositories/central' }
+    maven {
+        url = uri('https://maven.pkg.github.com/MCEngine/mcengine')
+        credentials {
+            username = git_user_name
+            password = git_user_token
+        }
     }
-
-    tasks.named('shadowJar').configure {
-        archiveClassifier = null
+    maven {
+        url = uri('https://maven.pkg.github.com/MCEngine/artificialintelligence')
+        credentials {
+            username = git_user_name
+            password = git_user_token
+        }
     }
 }
 
 dependencies {
     implementation project(path: ":mcengine-chat-bot-api", configuration: 'shadow')
-
     compileOnly "io.github.mcengine:mcengine-api:$mcengineApiVersion"
     compileOnly "io.github.mcengine:mcengine-artificialintelligence-api:$mcengineArtificialIntelligenceApiVersion"
-
     compileOnly "org.spigotmc:spigot-api:$spigotmcApiVersion"
 }
 
 shadowJar {
-    version = version
     archiveClassifier = null
     archiveBaseName = project.jarName
 }

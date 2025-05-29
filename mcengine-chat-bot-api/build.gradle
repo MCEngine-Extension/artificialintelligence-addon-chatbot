@@ -1,13 +1,22 @@
 plugins {
     id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 def spigotmcApiVersion = findProperty('spigotmc-api.version') ?: 'undefined'
+def jarName = System.getenv('PROJECT_NAME') ?: 'MCEngine-Chat-Bot' // fallback for API base name
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:$spigotmcApiVersion"
 }
 
 shadowJar {
-    archiveBaseName = "${project.jarName}-API"
+    archiveBaseName = "${jarName}-API"
+    archiveClassifier = null
 }
+
+artifacts {
+    add('shadow', shadowJar)
+}
+
+build.dependsOn(shadowJar)

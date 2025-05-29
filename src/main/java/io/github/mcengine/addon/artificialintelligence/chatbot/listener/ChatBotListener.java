@@ -75,10 +75,10 @@ public class ChatBotListener implements Listener {
             finalMessage = sb.toString();
         }
 
-        MCEngineArtificialIntelligenceApiUtilBotManager.setWaiting(player, true);
+        MCEngineArtificialIntelligenceApi.getApi().setWaiting(player, true);
         String platform = MCEngineArtificialIntelligenceApiUtilBotManager.getPlatform(player);
         String model = MCEngineArtificialIntelligenceApiUtilBotManager.getModel(player);
 
-        new MCEngineArtificialIntelligenceApiUtilBotTask(plugin, player, platform, model, finalMessage).runTaskAsynchronously(plugin);
+        MCEngineArtificialIntelligenceApi.getApi().runBotTask(player, platform, model, finalMessage);
     }
 }

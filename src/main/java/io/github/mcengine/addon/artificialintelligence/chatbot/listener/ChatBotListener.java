@@ -80,6 +80,6 @@ public class ChatBotListener implements Listener {
         String platform = MCEngineArtificialIntelligenceApiUtilBotManager.getPlatform(player);
         String model = MCEngineArtificialIntelligenceApiUtilBotManager.getModel(player);
 
-        MCEngineArtificialIntelligenceApi.getApi().runBotTask(player, platform, model, finalMessage);
+        MCEngineArtificialIntelligenceApi.getApi().runBotTask(player, "server", platform, model, finalMessage);
     }
 }

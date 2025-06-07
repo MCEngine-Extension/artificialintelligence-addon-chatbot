@@ -4,6 +4,8 @@ import io.github.mcengine.api.artificialintelligence.addon.*;
 import io.github.mcengine.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.addon.artificialintelligence.chatbot.listener.ChatBotListener;
 import io.github.mcengine.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
+import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotUtil;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -36,6 +38,8 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
     @Override
     public void onLoad(Plugin plugin) {
         MCEngineArtificialIntelligenceAddOnLogger logger = new MCEngineArtificialIntelligenceAddOnLogger(plugin, "MCEngineChatBot");
+
+        ChatBotUtil.createSimpleFile(plugin);
 
         try {
             // Register listener

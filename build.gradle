@@ -7,9 +7,9 @@ version = project.properties[project.name + '.version'] ?: 'undefined'
 group = 'io.github.mcengine'
 
 ext {
-    git_user_name = System.getenv('GIT_USER_NAME') ?: 'null'
-    git_user_token = System.getenv('GIT_USER_TOKEN') ?: 'null'
-    jarName = System.getenv('PROJECT_NAME') ?: 'MCEngine-Chat-Bot'
+    user_git_name = System.getenv('USER_GIT_NAME')
+    user_github_token = System.getenv('USER_GITHUB_TOKEN')
+    jarName = System.getenv('PROJECT_NAME') ?: 'MCEngine-ArtificialIntelligence-AddOn-Chat-Bot'
 }
 
 def mcengineApiVersion = findProperty('mcengine-api.version') ?: 'undefined'
@@ -38,24 +38,23 @@ allprojects {
         maven { url 'https://oss.sonatype.org/content/repositories/central' }
 
         maven {
-            url = uri('https://maven.pkg.github.com/MCEngine/mcengine')
+            url = uri('https://maven.pkg.github.com/MCEngine/mcengine-api')
             credentials {
-                username = project.git_user_name ?: 'null'
-                password = project.git_user_token ?: 'null'
+                username = project.user_git_name
+                password = project.user_github_token
             }
         }
         maven {
-            url = uri('https://maven.pkg.github.com/MCEngine/artificialintelligence')
+            url = uri('https://maven.pkg.github.com/MCEngine/artificialintelligence-api')
             credentials {
-                username = project.git_user_name ?: 'null'
-                password = project.git_user_token ?: 'null'
+                username = project.user_git_name
+                password = project.user_github_token
             }
         }
     }
 }
 
 dependencies {
-    implementation project(path: ":mcengine-chat-bot-api", configuration: 'shadow')
     compileOnly "io.github.mcengine:mcengine-api:$mcengineApiVersion"
     compileOnly "io.github.mcengine:mcengine-artificialintelligence-api:$mcengineArtificialIntelligenceApiVersion"
     compileOnly "org.spigotmc:spigot-api:$spigotmcApiVersion"

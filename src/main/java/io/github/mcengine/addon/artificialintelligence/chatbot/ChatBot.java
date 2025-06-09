@@ -1,6 +1,7 @@
 package io.github.mcengine.addon.artificialintelligence.chatbot;
 
 import io.github.mcengine.api.artificialintelligence.addon.IMCEngineArtificialIntelligenceAddOn;
+import io.github.mcengine.api.mcengine.MCEngineApi;
 import io.github.mcengine.api.mcengine.addon.MCEngineAddOnLogger;
 import io.github.mcengine.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.addon.artificialintelligence.chatbot.listener.ChatBotListener;
@@ -95,5 +96,9 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
             logger.warning("Failed to initialize ChatBot AddOn: " + e.getMessage());
             e.printStackTrace();
         }
+
+        MCEngineApi.checkUpdate(plugin, logger.getLogger(), "[AddOn] [MCEngineChatBot] ",
+        "github", "MCEngine-AddOn", "artificialintelligence-report",
+        plugin.getConfig().getString("github.token", "null"));
     }
 }

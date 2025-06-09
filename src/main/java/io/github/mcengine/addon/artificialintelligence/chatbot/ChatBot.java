@@ -97,7 +97,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
             e.printStackTrace();
         }
 
-        MCEngineApi.checkUpdate(plugin, logger.getLogger(), "[AddOn] [MCEngineChatBot] ",
+        MCEngineApi.checkUpdate(plugin, logger.getLogger(), "[AddOn] [MCEngineChatBot]",
         "github", "MCEngine-AddOn", "artificialintelligence-report",
         plugin.getConfig().getString("github.token", "null"));
     }

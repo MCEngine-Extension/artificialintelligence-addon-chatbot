@@ -46,17 +46,21 @@ public class ChatBotListener implements Listener {
         event.setCancelled(true);
         event.getRecipients().clear();
 
-        if (MCEngineArtificialIntelligenceApi.getApi().checkWaitingPlayer(player)) {
+        MCEngineArtificialIntelligenceApi api = MCEngineArtificialIntelligenceApi.getApi();
+
+        String originalMessage = event.getMessage().trim();
+
+        // Prevent quitting while waiting
+        if (api.checkWaitingPlayer(player)) {
             player.sendMessage(ChatColor.RED + "⏳ Please wait for the AI to respond before sending another message.");
             return;
         }
 
-        String originalMessage = event.getMessage().trim();
-
+        // Only allow quit after AI has responded
         if (originalMessage.equalsIgnoreCase("quit")) {
             MCEngineArtificialIntelligenceApiUtilBotManager.terminate(player);
             Bukkit.getScheduler().runTask(plugin, () ->
-                    player.sendMessage(ChatColor.RED + "❌ AI conversation ended.")
+                player.sendMessage(ChatColor.RED + "❌ AI conversation ended.")
             );
             return;
         }
@@ -74,11 +78,9 @@ public class ChatBotListener implements Listener {
             finalMessage = sb.toString();
         }
 
-        MCEngineArtificialIntelligenceApi.getApi().setWaiting(player, true);
         String platform = MCEngineArtificialIntelligenceApiUtilBotManager.getPlatform(player);
         String model = MCEngineArtificialIntelligenceApiUtilBotManager.getModel(player);
 
-        MCEngineArtificialIntelligenceApi.getApi()
-            .runBotTask(player, "server", platform, model, finalMessage);
+        api.runBotTask(player, "server", platform, model, finalMessage);
     }
 }

@@ -1,16 +1,15 @@
 package io.github.mcengine.addon.artificialintelligence.chatbot.listener;
 
 import io.github.mcengine.api.artificialintelligence.MCEngineArtificialIntelligenceApi;
-import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotTask;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling.FunctionCallingLoader;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.Bukkit;
 
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class ChatBotListener implements Listener {
         event.setCancelled(true);
         event.getRecipients().clear();
 
-        if (MCEngineArtificialIntelligenceApiUtilBotManager.isWaiting(player)) {
+        if (MCEngineArtificialIntelligenceApi.getApi().checkWaitingPlayer(player)) {
             player.sendMessage(ChatColor.RED + "⏳ Please wait for the AI to respond before sending another message.");
             return;
         }
@@ -68,7 +67,6 @@ public class ChatBotListener implements Listener {
         String finalMessage = originalMessage;
 
         if (!matchedResponses.isEmpty()) {
-            // Append all matched function responses into the prompt
             StringBuilder sb = new StringBuilder(originalMessage).append("\n\n[Function Info]\n");
             for (String response : matchedResponses) {
                 sb.append("- ").append(response).append("\n");
@@ -80,6 +78,7 @@ public class ChatBotListener implements Listener {
         String platform = MCEngineArtificialIntelligenceApiUtilBotManager.getPlatform(player);
         String model = MCEngineArtificialIntelligenceApiUtilBotManager.getModel(player);
 
-        MCEngineArtificialIntelligenceApi.getApi().runBotTask(player, "server", platform, model, finalMessage);
+        MCEngineArtificialIntelligenceApi.getApi()
+            .runBotTask(player, "server", platform, model, finalMessage);
     }
 }

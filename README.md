@@ -1,4 +1,4 @@
-[![Spigot](https://raw.githubusercontent.com/intergrav/devins-badges/refs/heads/v3/assets/cozy/available/spigot_vector.svg)](https://www.spigotmc.org/resources/mcengine-artificialintelligence-addon-chat-bot.124933/)
+[![Spigot](https://raw.githubusercontent.com/intergrav/devins-badges/refs/heads/v3/assets/cozy/available/spigot_vector.svg)](https://www.spigotmc.org/resources/mcengine-addon-artificialintelligence-chatbot.124933/)
 
 # Information 📖
 

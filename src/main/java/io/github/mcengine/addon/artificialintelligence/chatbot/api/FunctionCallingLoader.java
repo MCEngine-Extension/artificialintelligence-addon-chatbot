@@ -39,8 +39,25 @@ public class FunctionCallingLoader {
 
     private String applyPlaceholders(String response, Player player) {
         response = response
+                // Player Info
                 .replace("{player_name}", player.getName())
                 .replace("{player_uuid}", player.getUniqueId().toString())
+                .replace("{player_uuid_short}", player.getUniqueId().toString().split("-")[0])
+                .replace("{player_displayname}", player.getDisplayName())
+                .replace("{player_ip}", player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown")
+                .replace("{player_ping}", String.valueOf(player.spigot().getPing()))
+                .replace("{player_gamemode}", player.getGameMode().name())
+                .replace("{player_world}", player.getWorld().getName())
+                .replace("{player_location}", String.format("X: %.1f, Y: %.1f, Z: %.1f", 
+                        player.getLocation().getX(), 
+                        player.getLocation().getY(), 
+                        player.getLocation().getZ()))
+                .replace("{player_health}", String.valueOf(player.getHealth()))
+                .replace("{player_max_health}", String.valueOf(player.getMaxHealth()))
+                .replace("{player_food_level}", String.valueOf(player.getFoodLevel()))
+                .replace("{player_exp_level}", String.valueOf(player.getLevel()))
+
+                // Time placeholders
                 .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
                 .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")))
                 .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")));

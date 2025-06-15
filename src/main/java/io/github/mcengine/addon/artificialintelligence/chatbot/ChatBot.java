@@ -42,6 +42,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
         MCEngineAddOnLogger logger = new MCEngineAddOnLogger(plugin, "MCEngineChatBot");
 
         ChatBotUtil.createSimpleFile(plugin);
+        ChatBotUtil.createConfig(plugin);
 
         try {
             // Register listener

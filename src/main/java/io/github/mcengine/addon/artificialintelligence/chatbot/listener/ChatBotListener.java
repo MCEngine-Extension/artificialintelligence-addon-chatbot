@@ -3,13 +3,18 @@ package io.github.mcengine.addon.artificialintelligence.chatbot.listener;
 import io.github.mcengine.api.artificialintelligence.MCEngineArtificialIntelligenceApi;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling.FunctionCallingLoader;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
+
+import java.io.File;
 
 import java.util.List;
 
@@ -21,6 +26,7 @@ public class ChatBotListener implements Listener {
 
     private final Plugin plugin;
     private final FunctionCallingLoader functionCallingLoader;
+    private final String tokenType;
 
     /**
      * Constructor for ChatBotListener.
@@ -30,6 +36,11 @@ public class ChatBotListener implements Listener {
     public ChatBotListener(Plugin plugin) {
         this.plugin = plugin;
         this.functionCallingLoader = new FunctionCallingLoader(plugin);
+        // Load custom config file
+        File configFile = new File(plugin.getDataFolder(), "addons/MCEngineChatBot/config.yml");
+        FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+
+        this.tokenType = config.getString("token.type", "server");
     }
 
     /**

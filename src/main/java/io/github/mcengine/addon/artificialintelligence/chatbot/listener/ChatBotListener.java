@@ -92,6 +92,6 @@ public class ChatBotListener implements Listener {
         String platform = MCEngineArtificialIntelligenceApiUtilBotManager.getPlatform(player);
         String model = MCEngineArtificialIntelligenceApiUtilBotManager.getModel(player);
 
-        api.runBotTask(player, "server", platform, model, finalMessage);
+        api.runBotTask(player, tokenType, platform, model, finalMessage);
     }
 }

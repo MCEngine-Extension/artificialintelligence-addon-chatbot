@@ -45,7 +45,6 @@ public class FunctionCallingLoader {
                 .replace("{player_uuid_short}", player.getUniqueId().toString().split("-")[0])
                 .replace("{player_displayname}", player.getDisplayName())
                 .replace("{player_ip}", player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown")
-                .replace("{player_ping}", String.valueOf(player.spigot().getPing()))
                 .replace("{player_gamemode}", player.getGameMode().name())
                 .replace("{player_world}", player.getWorld().getName())
                 .replace("{player_location}", String.format("X: %.1f, Y: %.1f, Z: %.1f", 

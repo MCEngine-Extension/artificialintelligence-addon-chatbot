@@ -14,7 +14,7 @@ public class FunctionCallingLoader {
 
     public FunctionCallingLoader(Plugin plugin) {
         IFunctionCallingLoader loader = new FunctionCallingJson(
-                new java.io.File(plugin.getDataFolder(), "addons/MCEngineChatBot/data/")
+                new java.io.File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/data/")
         );
         mergedRules.addAll(loader.loadFunctionRules());
     }

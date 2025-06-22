@@ -17,7 +17,7 @@ public class ChatBotUtil {
 
     public static void createSimpleFile(Plugin plugin) {
         // Target folder: <plugin_data_folder>/addons/MCEngineChatBot/data/
-        File dataFolder = new File(plugin.getDataFolder(), "addons/MCEngineChatBot/data/");
+        File dataFolder = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/data/");
 
         // If folder exists, skip
         if (dataFolder.exists()) {

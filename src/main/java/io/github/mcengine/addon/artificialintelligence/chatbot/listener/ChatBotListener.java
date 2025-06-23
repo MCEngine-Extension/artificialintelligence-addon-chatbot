@@ -37,7 +37,7 @@ public class ChatBotListener implements Listener {
         this.plugin = plugin;
         this.functionCallingLoader = new FunctionCallingLoader(plugin);
         // Load custom config file
-        File configFile = new File(plugin.getDataFolder(), "addons/MCEngineChatBot/config.yml");
+        File configFile = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/config.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
         this.tokenType = config.getString("token.type", "server");

@@ -128,6 +128,13 @@ public class ChatBotUtil {
         YamlConfiguration config = new YamlConfiguration();
         config.set("token.type", "server");
 
+        // Mail config
+        config.set("mail.enable", false); // Whether to send emails on "quit"
+        config.set("mail.type", "gmail"); // Options: "gmail" or "outlook"
+        config.set("mail.email", "your-email@gmail.com"); // Sender email address
+        config.set("mail.password", "your-app-password"); // App password for SMTP login
+        config.set("mail.owner", "owner@example.com"); // Optional fallback (not currently used)
+
         try {
             config.save(configFile);
             System.out.println("Created default chatbot config: " + configFile.getAbsolutePath());

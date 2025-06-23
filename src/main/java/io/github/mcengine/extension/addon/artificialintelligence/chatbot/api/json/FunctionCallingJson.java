@@ -1,11 +1,11 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot.api.json;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.reflect.TypeToken;
-import io.github.mcengine.addon.artificialintelligence.chatbot.api.FunctionRule;
-import io.github.mcengine.addon.artificialintelligence.chatbot.api.IFunctionCallingLoader;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionRule;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.IFunctionCallingLoader;
 
 import java.io.File;
 import java.io.FileReader;

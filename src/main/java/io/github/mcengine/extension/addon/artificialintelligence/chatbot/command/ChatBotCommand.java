@@ -1,4 +1,4 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot.command;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.command;
 
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import org.bukkit.command.Command;

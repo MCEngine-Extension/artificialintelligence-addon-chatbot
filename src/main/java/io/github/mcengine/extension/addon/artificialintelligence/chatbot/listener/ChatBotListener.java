@@ -1,8 +1,8 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot.listener;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener;
 
 import io.github.mcengine.api.artificialintelligence.MCEngineArtificialIntelligenceApi;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
-import io.github.mcengine.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

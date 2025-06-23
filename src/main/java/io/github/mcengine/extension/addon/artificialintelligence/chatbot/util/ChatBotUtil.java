@@ -1,4 +1,4 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot.util;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

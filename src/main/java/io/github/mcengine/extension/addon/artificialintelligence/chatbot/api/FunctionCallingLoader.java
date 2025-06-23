@@ -1,7 +1,7 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot.api;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api;
 
-import io.github.mcengine.addon.artificialintelligence.chatbot.api.json.FunctionCallingJson;
-import io.github.mcengine.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.json.FunctionCallingJson;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 

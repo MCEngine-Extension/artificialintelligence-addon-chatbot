@@ -126,12 +126,15 @@ public class ChatBotUtil {
 
         YamlConfiguration config = new YamlConfiguration();
         config.options().header(
-            "Mail Configuration\n" +
-            "mail.enable: Whether to send emails on \"quit\"\n" +
-            "mail.type: Options: \"gmail\" or \"outlook\"\n" +
-            "mail.email: Sender email address\n" +
-            "mail.password: App password for SMTP login\n" +
-            "mail.owner: Optional fallback (not currently used)"
+            "Token Type Options:\n" +
+            "  - \"server\": Uses the default token from the main config file.\n" +
+            "  - \"player\": Uses the player's personal token.\n\n" +
+            "Mail Configuration:\n" +
+            "  mail.enable: Whether to send emails when the player types \"quit\".\n" +
+            "  mail.type: Options are \"gmail\" or \"outlook\".\n" +
+            "  mail.email: The sender's email address.\n" +
+            "  mail.password: App password for SMTP login.\n" +
+            "  mail.owner: Optional fallback address (currently not used)."
         );
 
         config.set("token.type", "server");

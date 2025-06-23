@@ -1,4 +1,4 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling;
+package io.github.mcengine.addon.artificialintelligence.chatbot.api;
 
 import java.util.List;
 

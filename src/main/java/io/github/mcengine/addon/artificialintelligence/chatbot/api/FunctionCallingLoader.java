@@ -1,12 +1,12 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling;
+package io.github.mcengine.addon.artificialintelligence.chatbot.api;
 
-import io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling.json.FunctionCallingJson;
+import io.github.mcengine.addon.artificialintelligence.chatbot.api.json.FunctionCallingJson;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
-import static io.github.mcengine.addon.artificialintelligence.chatbot.api.functions.calling.util.FunctionCallingLoaderUtilTime.*;
+import static io.github.mcengine.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime.*;
 
 public class FunctionCallingLoader {
 

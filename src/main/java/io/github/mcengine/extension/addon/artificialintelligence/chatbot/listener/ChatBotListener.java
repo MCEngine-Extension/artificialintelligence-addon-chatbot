@@ -72,25 +72,34 @@ public class ChatBotListener implements Listener {
 
         // Only allow quit after AI has responded
         if (originalMessage.equalsIgnoreCase("quit")) {
-            String history = MCEngineArtificialIntelligenceApiUtilBotManager.get(player);
-            FileConfiguration config = ChatBotConfigLoader.getCustomConfig(plugin);
+            // Run blocking logic asynchronously
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                String history = MCEngineArtificialIntelligenceApiUtilBotManager.get(player);
+                FileConfiguration config = ChatBotConfigLoader.getCustomConfig(plugin);
 
-            boolean mailEnabled = config.getBoolean("mail.enable", false);
+                boolean mailEnabled = config.getBoolean("mail.enable", false);
 
-            if (mailEnabled) {
-                String playerEmail = ChatBotListenerUtilDB.getPlayerEmail(player);
-                if (playerEmail != null && !playerEmail.isEmpty()) {
-                    ChatBotListenerUtil.sendDataToEmail(plugin, history, playerEmail);
-                    player.sendMessage(ChatColor.RED + "Your chat history has been sent to your email!");
-                } else {
-                    plugin.getLogger().warning("mail.enable is true, but no email is registered for player: " + player.getName());
+                if (mailEnabled) {
+                    String playerEmail = ChatBotListenerUtilDB.getPlayerEmail(player);
+                    if (playerEmail != null && !playerEmail.isEmpty()) {
+                        ChatBotListenerUtil.sendDataToEmail(plugin, history, playerEmail);
+                        
+                        // Notify player on main thread
+                        Bukkit.getScheduler().runTask(plugin, () ->
+                            player.sendMessage(ChatColor.RED + "Your chat history has been sent to your email!")
+                        );
+                    } else {
+                        plugin.getLogger().warning("mail.enable is true, but no email is registered for player: " + player.getName());
+                    }
                 }
-            }
 
-            MCEngineArtificialIntelligenceApiUtilBotManager.terminate(player);
-            Bukkit.getScheduler().runTask(plugin, () ->
-                player.sendMessage(ChatColor.RED + "❌ AI conversation ended.")
-            );
+                MCEngineArtificialIntelligenceApiUtilBotManager.terminate(player);
+
+                // Final message on main thread
+                Bukkit.getScheduler().runTask(plugin, () ->
+                    player.sendMessage(ChatColor.RED + "❌ AI conversation ended.")
+                );
+            });
             return;
         }
 

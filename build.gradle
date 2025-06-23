@@ -50,9 +50,12 @@ allprojects {
 }
 
 dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.21.6-R0.1-SNAPSHOT'
+
     compileOnly 'io.github.mcengine:core-api:1.0.5-1-SNAPSHOT'
     compileOnly 'io.github.mcengine:artificialintelligence-api:1.0.3-RELEASE'
-    compileOnly 'org.spigotmc:spigot-api:1.21.6-R0.1-SNAPSHOT'
+
+    compileOnly 'com.sun.mail:jakarta.mail:2.0.1'
 }
 
 shadowJar {

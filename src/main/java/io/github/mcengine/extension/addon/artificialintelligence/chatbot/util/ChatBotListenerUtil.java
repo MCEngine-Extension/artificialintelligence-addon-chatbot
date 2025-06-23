@@ -3,8 +3,8 @@ package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import javax.mail.*;
-import javax.mail.internet.*;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
 import java.util.Properties;
 
 /**

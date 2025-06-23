@@ -3,8 +3,8 @@ package io.github.mcengine.extension.addon.artificialintelligence.chatbot.listen
 import io.github.mcengine.api.artificialintelligence.MCEngineArtificialIntelligenceApi;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtil;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtilDB;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotConfigLoader;
 
 import org.bukkit.Bukkit;
@@ -18,12 +18,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-
 import java.util.List;
+import java.util.UUID;
 
 /**
- * Listens to chat messages from players currently in an AI conversation.
- * Cancels public chat and forwards input to the chatbot task.
+ * Listens for chat messages from players who are currently in a conversation with the AI.
+ * Cancels regular chat output and routes the input to the AI bot manager for processing.
+ * Handles session termination and optional email delivery of chat history.
  */
 public class ChatBotListener implements Listener {
 
@@ -32,14 +33,14 @@ public class ChatBotListener implements Listener {
     private final String tokenType;
 
     /**
-     * Constructor for ChatBotListener.
+     * Constructs the ChatBotListener and loads configuration for token type.
      *
-     * @param plugin The main plugin instance.
+     * @param plugin The plugin instance.
      */
     public ChatBotListener(Plugin plugin) {
         this.plugin = plugin;
         this.functionCallingLoader = new FunctionCallingLoader(plugin);
-        // Load custom config file
+
         File configFile = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/config.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
@@ -47,9 +48,9 @@ public class ChatBotListener implements Listener {
     }
 
     /**
-     * Intercepts player chat to handle AI conversation logic.
+     * Intercepts player chat messages for active AI sessions.
      *
-     * @param event The AsyncPlayerChatEvent.
+     * @param event The async player chat event.
      */
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
@@ -61,18 +62,15 @@ public class ChatBotListener implements Listener {
         event.getRecipients().clear();
 
         MCEngineArtificialIntelligenceApi api = MCEngineArtificialIntelligenceApi.getApi();
-
         String originalMessage = event.getMessage().trim();
 
-        // Prevent quitting while waiting
         if (api.checkWaitingPlayer(player)) {
             player.sendMessage(ChatColor.RED + "⏳ Please wait for the AI to respond before sending another message.");
             return;
         }
 
-        // Only allow quit after AI has responded
+        // Handle quit command
         if (originalMessage.equalsIgnoreCase("quit")) {
-            // Run blocking logic asynchronously
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 String history = MCEngineArtificialIntelligenceApiUtilBotManager.get(player);
                 FileConfiguration config = ChatBotConfigLoader.getCustomConfig(plugin);
@@ -80,11 +78,12 @@ public class ChatBotListener implements Listener {
                 boolean mailEnabled = config.getBoolean("mail.enable", false);
 
                 if (mailEnabled) {
-                    String playerEmail = ChatBotListenerUtilDB.getPlayerEmail(player);
+                    UUID playerId = player.getUniqueId();
+                    String playerEmail = ChatBotCommand.db.getPlayerEmail(playerId);
+
                     if (playerEmail != null && !playerEmail.isEmpty()) {
                         ChatBotListenerUtil.sendDataToEmail(plugin, history, playerEmail);
-                        
-                        // Notify player on main thread
+
                         Bukkit.getScheduler().runTask(plugin, () ->
                             player.sendMessage(ChatColor.RED + "Your chat history has been sent to your email!")
                         );
@@ -95,7 +94,6 @@ public class ChatBotListener implements Listener {
 
                 MCEngineArtificialIntelligenceApiUtilBotManager.terminate(player);
 
-                // Final message on main thread
                 Bukkit.getScheduler().runTask(plugin, () ->
                     player.sendMessage(ChatColor.RED + "❌ AI conversation ended.")
                 );
@@ -103,6 +101,7 @@ public class ChatBotListener implements Listener {
             return;
         }
 
+        // Normal message handling
         player.sendMessage(ChatColor.GRAY + "[You → AI]: " + ChatColor.WHITE + originalMessage);
 
         List<String> matchedResponses = functionCallingLoader.match(player, originalMessage);

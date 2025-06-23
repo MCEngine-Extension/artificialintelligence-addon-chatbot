@@ -7,25 +7,34 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 /**
- * Command to start an AI chat session or set player email.
- * <p>
- * Usage:
+ * Handles the execution of the /chatbot command, allowing players
+ * to either start a conversation with the AI or register their email address.
+ *
+ * Supported command usage:
  * <ul>
- *     <li>/chatbot {platform} {model} - starts a conversation</li>
- *     <li>/chatbot set email {address} - sets your email address</li>
+ *     <li>/chatbot set email your@email.com</li>
+ *     <li>/chatbot {platform} {model}</li>
  * </ul>
  */
 public class ChatBotCommand implements CommandExecutor {
 
     /**
-     * Handles the /chatbot command to initiate or manage an AI session.
+     * Static reference to the database utility class.
+     * Must be initialized in the plugin's main class.
+     */
+    public static ChatBotListenerUtilDB db;
+
+    /**
+     * Executes the /chatbot command.
      *
-     * @param sender  The command sender.
+     * @param sender  The source of the command.
      * @param command The command object.
-     * @param label   The command label.
-     * @param args    Command arguments.
-     * @return true if the command was processed.
+     * @param label   The alias of the command.
+     * @param args    The passed command arguments.
+     * @return true if the command was processed successfully.
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -34,14 +43,21 @@ public class ChatBotCommand implements CommandExecutor {
             return true;
         }
 
+        UUID playerId = player.getUniqueId();
+
         // /chatbot set email your@email.com
         if (args.length >= 3 && args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("email")) {
             String email = args[2];
-            ChatBotListenerUtilDB.setPlayerEmail(player, email);
+            boolean success = db.setPlayerEmail(playerId, email);
+            if (success) {
+                player.sendMessage("§aYour email has been saved successfully.");
+            } else {
+                player.sendMessage("§cInvalid email format or database error.");
+            }
             return true;
         }
 
-        // /chatbot platform model
+        // /chatbot {platform} {model}
         if (args.length < 2) {
             player.sendMessage("§cUsage:");
             player.sendMessage("§7/chatbot {platform} {model}");

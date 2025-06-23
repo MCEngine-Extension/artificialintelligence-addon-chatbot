@@ -124,15 +124,30 @@ public class ChatBotUtil {
             return;
         }
 
-        // Create default configuration
         YamlConfiguration config = new YamlConfiguration();
+        config.options().header(
+            "Token Type Options:\n" +
+            "  - \"server\": Uses the default token from the main config file.\n" +
+            "  - \"player\": Uses the player's personal token.\n\n" +
+            "Mail Configuration:\n" +
+            "  mail.enable: Whether to send emails when the player types \"quit\".\n" +
+            "  mail.type: Options are \"gmail\" or \"outlook\".\n" +
+            "  mail.email: The sender's email address.\n" +
+            "  mail.password: App password for SMTP login.\n" +
+            "  mail.owner: Optional fallback address (currently not used)."
+        );
+
         config.set("token.type", "server");
+        config.set("mail.enable", false);
+        config.set("mail.type", "gmail");
+        config.set("mail.email", "your-email@gmail.com");
+        config.set("mail.password", "your-app-password");
+        config.set("mail.owner", "owner@example.com");
 
         try {
             config.save(configFile);
             System.out.println("Created default chatbot config: " + configFile.getAbsolutePath());
         } catch (IOException e) {
-            System.err.println("Failed to save chatbot config: " + e.getMessage());
             e.printStackTrace();
         }
     }

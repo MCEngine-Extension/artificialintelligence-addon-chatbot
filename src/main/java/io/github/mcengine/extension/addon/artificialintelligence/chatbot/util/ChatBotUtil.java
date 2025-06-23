@@ -1,8 +1,7 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot.util;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.bukkit.plugin.Plugin;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -13,24 +12,34 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class for creating default configuration and data files
+ * for the MCEngineChatBot plugin.
+ */
 public class ChatBotUtil {
 
+    /**
+     * Creates the default `data.json` file containing sample chatbot rules.
+     * Skips creation if the target folder already exists.
+     * The file is saved to: {@code <plugin_data_folder>/configs/addons/MCEngineChatBot/data/data.json}
+     *
+     * @param plugin The plugin instance used to resolve the data folder.
+     */
     public static void createSimpleFile(Plugin plugin) {
-        // Target folder: <plugin_data_folder>/addons/MCEngineChatBot/data/
         File dataFolder = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/data/");
 
-        // If folder exists, skip
+        // If folder already exists, skip file creation
         if (dataFolder.exists()) {
             return;
         }
 
-        // Create folder
+        // Attempt to create directory
         if (!dataFolder.mkdirs()) {
             System.err.println("Failed to create directory: " + dataFolder.getAbsolutePath());
             return;
         }
 
-        // Define full JSON structure
+        // Define default rules for chatbot as a JSON-compatible list of maps
         List<Map<String, Object>> data = List.of(
             Map.of(
                 "match", Arrays.asList(
@@ -83,7 +92,7 @@ public class ChatBotUtil {
             )
         );
 
-        // Write to JSON file
+        // Write data to JSON file
         File jsonFile = new File(dataFolder, "data.json");
         try (FileWriter writer = new FileWriter(jsonFile)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -95,18 +104,27 @@ public class ChatBotUtil {
         }
     }
 
+    /**
+     * Creates a default `config.yml` file for the chatbot plugin.
+     * This config sets the token type to "server".
+     * File is saved to: {@code <plugin_data_folder>/configs/addons/MCEngineChatBot/config.yml}
+     *
+     * @param plugin The plugin instance used to determine the data folder.
+     */
     public static void createConfig(Plugin plugin) {
-        // Path: <plugin_data_folder>/addons/MCEngineChatBot/config.yml
         File configFile = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/config.yml");
 
+        // Skip creation if config already exists
         if (configFile.exists()) return;
 
+        // Ensure parent directory exists
         File configDir = configFile.getParentFile();
         if (!configDir.exists() && !configDir.mkdirs()) {
             System.err.println("Failed to create config directory: " + configDir.getAbsolutePath());
             return;
         }
 
+        // Create default configuration
         YamlConfiguration config = new YamlConfiguration();
         config.set("token.type", "server");
 

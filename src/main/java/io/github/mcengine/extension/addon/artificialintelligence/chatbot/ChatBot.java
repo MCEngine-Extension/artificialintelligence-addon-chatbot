@@ -1,12 +1,12 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot;
 
 import io.github.mcengine.api.artificialintelligence.extension.addon.IMCEngineArtificialIntelligenceAddOn;
 import io.github.mcengine.api.mcengine.MCEngineApi;
-import io.github.mcengine.api.mcengine.addon.MCEngineAddOnLogger;
-import io.github.mcengine.addon.artificialintelligence.chatbot.command.ChatBotCommand;
-import io.github.mcengine.addon.artificialintelligence.chatbot.listener.ChatBotListener;
-import io.github.mcengine.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
-import io.github.mcengine.addon.artificialintelligence.chatbot.util.ChatBotUtil;
+import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener.ChatBotListener;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotUtil;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

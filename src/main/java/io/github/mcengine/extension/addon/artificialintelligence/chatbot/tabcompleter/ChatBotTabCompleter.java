@@ -1,4 +1,4 @@
-package io.github.mcengine.addon.artificialintelligence.chatbot.tabcompleter;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.tabcompleter;
 
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilAi;
 import org.bukkit.command.Command;

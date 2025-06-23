@@ -28,7 +28,7 @@ public class FunctionCallingLoader {
         );
         mergedRules.addAll(loader.loadFunctionRules());
 
-        plugin.getLogger().info("✅ Loaded " + mergedRules.size() + " function rule(s).");
+        plugin.getLogger().info("Loaded " + mergedRules.size() + " function rules.");
     }
 
     /**

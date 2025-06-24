@@ -1,15 +1,18 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot;
 
-import io.github.mcengine.api.artificialintelligence.MCEngineArtificialIntelligenceApi;
+import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.api.artificialintelligence.extension.addon.IMCEngineArtificialIntelligenceAddOn;
 import io.github.mcengine.api.mcengine.MCEngineApi;
 import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
 
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener.ChatBotListener;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtilDB;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotUtil;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotConfigLoader;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -39,10 +42,13 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
     @Override
     public void onLoad(Plugin plugin) {
         MCEngineAddOnLogger logger = new MCEngineAddOnLogger(plugin, "MCEngineChatBot");
+        ChatBotConfigLoader.check(logger);
+        FunctionCallingLoader.check(logger);
+        FunctionCallingLoaderUtilTime.check(logger);
 
         try {
             // Initialize database table for chatbot mail
-            Connection conn = MCEngineArtificialIntelligenceApi.getApi().getDBConnection();
+            Connection conn = MCEngineArtificialIntelligenceCommon.getApi().getDBConnection();
             ChatBotCommand.db = new ChatBotListenerUtilDB(conn, logger);
 
             // Create required file and config
@@ -51,7 +57,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
 
             // Register event listener
             PluginManager pluginManager = Bukkit.getPluginManager();
-            pluginManager.registerEvents(new ChatBotListener(plugin), plugin);
+            pluginManager.registerEvents(new ChatBotListener(plugin, logger), plugin);
 
             // Reflectively access Bukkit's CommandMap
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");

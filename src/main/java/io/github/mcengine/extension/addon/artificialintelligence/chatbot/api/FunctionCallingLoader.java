@@ -1,5 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api;
 
+import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.json.FunctionCallingJson;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime;
 import org.bukkit.entity.Player;
@@ -28,6 +29,10 @@ public class FunctionCallingLoader {
         mergedRules.addAll(loader.loadFunctionRules());
 
         plugin.getLogger().info("Loaded " + mergedRules.size() + " function rules.");
+    }
+
+    public static void check(MCEngineAddOnLogger logger) {
+        logger.info("Class: FunctionCallingLoader is loadded.");
     }
 
     /**

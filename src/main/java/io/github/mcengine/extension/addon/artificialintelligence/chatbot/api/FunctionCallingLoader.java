@@ -22,13 +22,13 @@ public class FunctionCallingLoader {
      *
      * @param plugin The plugin instance used for locating the data folder and logging.
      */
-    public FunctionCallingLoader(Plugin plugin) {
+    public FunctionCallingLoader(Plugin plugin, MCEngineAddOnLogger logger) {
         IFunctionCallingLoader loader = new FunctionCallingJson(
                 new java.io.File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/data/")
         );
         mergedRules.addAll(loader.loadFunctionRules());
 
-        plugin.getLogger().info("Loaded " + mergedRules.size() + " function rules.");
+        logger.info("Loaded " + mergedRules.size() + " function rules.");
     }
 
     public static void check(MCEngineAddOnLogger logger) {

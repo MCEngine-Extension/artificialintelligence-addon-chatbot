@@ -1,5 +1,7 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util;
 
+import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -9,6 +11,10 @@ import java.util.TimeZone;
  * and generating dynamic placeholder labels.
  */
 public class FunctionCallingLoaderUtilTime {
+
+    public static void check(MCEngineAddOnLogger logger) {
+        logger.info("Class: FunctionCallingLoaderUtilTime is loadded.");
+    }
 
     /**
      * Returns the current time in the specified {@link TimeZone}, formatted as "HH:mm:ss".

@@ -6,6 +6,7 @@ import io.github.mcengine.api.mcengine.MCEngineApi;
 import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
 
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener.ChatBotListener;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
@@ -43,6 +44,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
         MCEngineAddOnLogger logger = new MCEngineAddOnLogger(plugin, "MCEngineChatBot");
         ChatBotConfigLoader.check(logger);
         FunctionCallingLoader.check(logger);
+        FunctionCallingLoaderUtilTime.check(logger);
 
         try {
             // Initialize database table for chatbot mail
@@ -55,7 +57,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
 
             // Register event listener
             PluginManager pluginManager = Bukkit.getPluginManager();
-            pluginManager.registerEvents(new ChatBotListener(plugin), plugin);
+            pluginManager.registerEvents(new ChatBotListener(plugin, logger), plugin);
 
             // Reflectively access Bukkit's CommandMap
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");

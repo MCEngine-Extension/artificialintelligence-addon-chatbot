@@ -1,7 +1,9 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener;
 
-import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
+
+import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
+import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtil;
@@ -37,9 +39,9 @@ public class ChatBotListener implements Listener {
      *
      * @param plugin The plugin instance.
      */
-    public ChatBotListener(Plugin plugin) {
+    public ChatBotListener(Plugin plugin, MCEngineAddOnLogger logger) {
         this.plugin = plugin;
-        this.functionCallingLoader = new FunctionCallingLoader(plugin);
+        this.functionCallingLoader = new FunctionCallingLoader(plugin, logger);
 
         File configFile = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/config.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);

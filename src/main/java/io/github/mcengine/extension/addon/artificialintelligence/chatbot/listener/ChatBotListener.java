@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener;
 
-import io.github.mcengine.api.artificialintelligence.MCEngineArtificialIntelligenceApi;
+import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
@@ -61,7 +61,7 @@ public class ChatBotListener implements Listener {
         event.setCancelled(true);
         event.getRecipients().clear();
 
-        MCEngineArtificialIntelligenceApi api = MCEngineArtificialIntelligenceApi.getApi();
+        MCEngineArtificialIntelligenceCommon api = MCEngineArtificialIntelligenceCommon.getApi();
         String originalMessage = event.getMessage().trim();
 
         if (api.checkWaitingPlayer(player)) {

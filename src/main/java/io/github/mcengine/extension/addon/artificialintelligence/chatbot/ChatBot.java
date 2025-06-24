@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot;
 
-import io.github.mcengine.api.artificialintelligence.MCEngineArtificialIntelligenceApi;
+import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.api.artificialintelligence.extension.addon.IMCEngineArtificialIntelligenceAddOn;
 import io.github.mcengine.api.mcengine.MCEngineApi;
 import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
@@ -42,7 +42,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
 
         try {
             // Initialize database table for chatbot mail
-            Connection conn = MCEngineArtificialIntelligenceApi.getApi().getDBConnection();
+            Connection conn = MCEngineArtificialIntelligenceCommon.getApi().getDBConnection();
             ChatBotCommand.db = new ChatBotListenerUtilDB(conn, logger);
 
             // Create required file and config

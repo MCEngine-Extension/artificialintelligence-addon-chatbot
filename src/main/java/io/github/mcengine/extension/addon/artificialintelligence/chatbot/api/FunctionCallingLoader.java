@@ -6,54 +6,64 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
-
+import java.util.regex.Pattern;
 
 import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingItem.*;
 import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime.*;
 
 /**
  * Loads and handles matching of function calling rules for the MCEngineChatBot plugin.
- * Supports placeholder replacement and time zone formatting in responses.
+ * Supports placeholder replacement, dynamic fuzzy matching using regex, and time zone formatting.
  */
 public class FunctionCallingLoader {
 
+    /**
+     * List of all rules loaded from `.json` files, used to determine chatbot responses.
+     */
     private final List<FunctionRule> mergedRules = new ArrayList<>();
 
     /**
      * Constructs the loader and loads rules from all `.json` files in the configured directory.
      * Logs the number of rules loaded.
      *
-     * @param plugin The plugin instance used for locating the data folder and logging.
+     * @param plugin     The plugin instance used for locating the data folder.
+     * @param folderPath The folder path relative to the plugin data directory.
+     * @param logger     The logger instance used for logging info to console.
      */
     public FunctionCallingLoader(Plugin plugin, String folderPath, MCEngineAddOnLogger logger) {
         IFunctionCallingLoader loader = new FunctionCallingJson(
                 new java.io.File(plugin.getDataFolder(), folderPath + "/data/")
         );
         mergedRules.addAll(loader.loadFunctionRules());
-
         logger.info("Loaded " + mergedRules.size() + " function rules.");
     }
 
+    /**
+     * Verifies this class is loaded and outputs a test log message.
+     *
+     * @param logger The logger to use for output.
+     */
     public static void check(MCEngineAddOnLogger logger) {
-        logger.info("Class: FunctionCallingLoader is loadded.");
+        logger.info("Class: FunctionCallingLoader is loaded.");
     }
 
     /**
-     * Matches the input string against known function rules for the given player.
-     * Performs case-insensitive fuzzy matching and applies dynamic placeholders.
+     * Matches player input against known rules using regex-based fuzzy matching.
+     * If any rule matches, the response will be dynamically filled with placeholders and returned.
      *
-     * @param player The player providing the input (used for placeholder replacement).
-     * @param input  The user-provided input string to match against.
-     * @return A list of resolved responses from matched rules.
+     * @param player The player who sent the input.
+     * @param input  The raw user input text.
+     * @return A list of response strings that matched and were resolved with placeholders.
      */
     public List<String> match(Player player, String input) {
         List<String> results = new ArrayList<>();
-        String lowerInput = input.toLowerCase().trim();
+        String trimmedInput = input.trim();
 
         for (FunctionRule rule : mergedRules) {
-            for (String pattern : rule.match) {
-                String lowerPattern = pattern.toLowerCase();
-                if (lowerInput.contains(lowerPattern) || lowerPattern.contains(lowerInput)) {
+            for (String raw : rule.match) {
+                String pattern = convertToRegex(raw);
+                Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+                if (regex.matcher(trimmedInput).find()) {
                     String resolved = applyPlaceholders(rule.response, player);
                     results.add(resolved);
                     break;
@@ -65,39 +75,51 @@ public class FunctionCallingLoader {
     }
 
     /**
-     * Applies placeholders to a rule's response string based on the provided player's data and various time zones.
+     * Converts a plain user-friendly match string into a basic regex pattern for fuzzy matching.
+     * For example, "can I craft furnace" becomes ".*can.*i.*craft.*furnace.*"
      *
-     * @param response The raw response string containing placeholders.
-     * @param player   The player whose data will be used for placeholder replacement.
-     * @return The formatted response with all placeholders replaced.
+     * @param text The plain text pattern from JSON.
+     * @return A regex pattern string.
+     */
+    private String convertToRegex(String text) {
+        String[] words = text.trim().toLowerCase().split("\\s+");
+        return ".*" + String.join(".*", words) + ".*";
+    }
+
+    /**
+     * Replaces placeholders in a chatbot response with real-time values from the player or server.
+     *
+     * @param response The raw response containing placeholders.
+     * @param player   The player whose data is used for substitution.
+     * @return A fully resolved string with all placeholders replaced.
      */
     private String applyPlaceholders(String response, Player player) {
         response = response
-                // Player info (alphabetically sorted)
-            .replace("{item_in_hand}", getItemInHandDetails(player))
-            .replace("{player_displayname}", player.getDisplayName())
-            .replace("{player_exp_level}", String.valueOf(player.getLevel()))
-            .replace("{player_food_level}", String.valueOf(player.getFoodLevel()))
-            .replace("{player_gamemode}", player.getGameMode().name())
-            .replace("{player_health}", String.valueOf(player.getHealth()))
-            .replace("{player_inventory}", getPlayerInventoryDetails(player))
-            .replace("{player_ip}", player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown")
-            .replace("{player_location}", String.format("X: %.1f, Y: %.1f, Z: %.1f",
-                    player.getLocation().getX(),
-                    player.getLocation().getY(),
-                    player.getLocation().getZ()))
-            .replace("{player_max_health}", String.valueOf(player.getMaxHealth()))
-            .replace("{player_name}", player.getName())
-            .replace("{player_uuid}", player.getUniqueId().toString())
-            .replace("{player_uuid_short}", player.getUniqueId().toString().split("-")[0])
-            .replace("{player_world}", player.getWorld().getName())
+                // Player-related placeholders (sorted A–Z)
+                .replace("{item_in_hand}", getItemInHandDetails(player))
+                .replace("{player_displayname}", player.getDisplayName())
+                .replace("{player_exp_level}", String.valueOf(player.getLevel()))
+                .replace("{player_food_level}", String.valueOf(player.getFoodLevel()))
+                .replace("{player_gamemode}", player.getGameMode().name())
+                .replace("{player_health}", String.valueOf(player.getHealth()))
+                .replace("{player_inventory}", getPlayerInventoryDetails(player))
+                .replace("{player_ip}", player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown")
+                .replace("{player_location}", String.format("X: %.1f, Y: %.1f, Z: %.1f",
+                        player.getLocation().getX(),
+                        player.getLocation().getY(),
+                        player.getLocation().getZ()))
+                .replace("{player_max_health}", String.valueOf(player.getMaxHealth()))
+                .replace("{player_name}", player.getName())
+                .replace("{player_uuid}", player.getUniqueId().toString())
+                .replace("{player_uuid_short}", player.getUniqueId().toString().split("-")[0])
+                .replace("{player_world}", player.getWorld().getName())
 
-            // Static time zones
-            .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")))
-            .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
-            .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")));
+                // Static time zones
+                .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")))
+                .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
+                .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")));
 
-        // Named time zones (alphabetically sorted by placeholder)
+        // Named time zones (sorted A–Z)
         Map<String, String> namedZones = Map.ofEntries(
                 Map.entry("{time_bangkok}", getFormattedTime("Asia/Bangkok")),
                 Map.entry("{time_berlin}", getFormattedTime("Europe/Berlin")),
@@ -115,7 +137,7 @@ public class FunctionCallingLoader {
             response = response.replace(entry.getKey(), entry.getValue());
         }
 
-        // UTC/GMT offsets from -12:00 to +14:00
+        // Dynamic GMT/UTC offset placeholders
         for (int hour = -12; hour <= 14; hour++) {
             for (int min : new int[]{0, 30, 45}) {
                 String utcLabel = getZoneLabel("utc", hour, min);

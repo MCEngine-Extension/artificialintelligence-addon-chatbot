@@ -11,12 +11,15 @@ import java.util.regex.Pattern;
 
 import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingItem.*;
 import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime.*;
+import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingWorld.*;
 
 /**
  * Loads and handles matching of function calling rules for the MCEngineChatBot plugin.
  * Supports placeholder replacement, dynamic fuzzy matching using regex, and time zone formatting.
  */
 public class FunctionCallingLoader {
+
+    private final Plugin plugin;
 
     /**
      * List of all rules loaded from `.json` files, used to determine chatbot responses.
@@ -32,6 +35,7 @@ public class FunctionCallingLoader {
      * @param logger     The logger instance used for logging info to console.
      */
     public FunctionCallingLoader(Plugin plugin, String folderPath, MCEngineAddOnLogger logger) {
+        this.plugin = plugin;
         IFunctionCallingLoader loader = new FunctionCallingJson(
                 new java.io.File(plugin.getDataFolder(), folderPath + "/data/")
         );
@@ -118,7 +122,7 @@ public class FunctionCallingLoader {
 
                 // World and environment placeholders (sorted A–Z)
                 .replace("{world_difficulty}", world.getDifficulty().name())
-                .replace("{world_entity_count}", String.valueOf(world.getEntities().size()))
+                .replace("{world_entity_count}", getSafeEntityCount(plugin, world))
                 .replace("{world_loaded_chunks}", String.valueOf(world.getLoadedChunks().length))
                 .replace("{world_seed}", String.valueOf(world.getSeed()))
                 .replace("{world_time}", String.valueOf(world.getTime()))

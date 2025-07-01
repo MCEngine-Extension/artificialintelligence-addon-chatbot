@@ -21,12 +21,12 @@ public class ChatBotUtil {
     /**
      * Creates the default `data.json` file containing sample chatbot rules.
      * Skips creation if the target folder already exists.
-     * The file is saved to: {@code <plugin_data_folder>/configs/addons/MCEngineChatBot/data/data.json}
+     * The file is saved to: {@code <plugin_data_folder>/extensions/addons/configs/MCEngineChatBot/data/data.json}
      *
      * @param plugin The plugin instance used to resolve the data folder.
      */
     public static void createSimpleFile(Plugin plugin) {
-        File dataFolder = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/data/");
+        File dataFolder = new File(plugin.getDataFolder(), "extensions/addons/configs/MCEngineChatBot/data/");
 
         // If folder already exists, skip file creation
         if (dataFolder.exists()) {

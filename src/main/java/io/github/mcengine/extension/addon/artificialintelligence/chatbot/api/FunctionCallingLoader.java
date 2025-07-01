@@ -2,6 +2,7 @@ package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api;
 
 import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.json.FunctionCallingJson;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -76,7 +77,6 @@ public class FunctionCallingLoader {
 
     /**
      * Converts a plain user-friendly match string into a basic regex pattern for fuzzy matching.
-     * For example, "can I craft furnace" becomes ".*can.*i.*craft.*furnace.*"
      *
      * @param text The plain text pattern from JSON.
      * @return A regex pattern string.
@@ -94,6 +94,8 @@ public class FunctionCallingLoader {
      * @return A fully resolved string with all placeholders replaced.
      */
     private String applyPlaceholders(String response, Player player) {
+        World world = player.getWorld();
+
         response = response
                 // Player-related placeholders (sorted A–Z)
                 .replace("{item_in_hand}", getItemInHandDetails(player))
@@ -112,14 +114,21 @@ public class FunctionCallingLoader {
                 .replace("{player_name}", player.getName())
                 .replace("{player_uuid}", player.getUniqueId().toString())
                 .replace("{player_uuid_short}", player.getUniqueId().toString().split("-")[0])
-                .replace("{player_world}", player.getWorld().getName())
+                .replace("{player_world}", world.getName())
+
+                // World and environment placeholders (sorted A–Z)
+                .replace("{world_difficulty}", world.getDifficulty().name())
+                .replace("{world_entity_count}", String.valueOf(world.getEntities().size()))
+                .replace("{world_loaded_chunks}", String.valueOf(world.getLoadedChunks().length))
+                .replace("{world_seed}", String.valueOf(world.getSeed()))
+                .replace("{world_time}", String.valueOf(world.getTime()))
+                .replace("{world_weather}", world.hasStorm() ? "Raining" : "Clear")
 
                 // Static time zones
                 .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")))
                 .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
                 .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")));
 
-        // Named time zones (sorted A–Z)
         Map<String, String> namedZones = Map.ofEntries(
                 Map.entry("{time_bangkok}", getFormattedTime("Asia/Bangkok")),
                 Map.entry("{time_berlin}", getFormattedTime("Europe/Berlin")),
@@ -137,7 +146,6 @@ public class FunctionCallingLoader {
             response = response.replace(entry.getKey(), entry.getValue());
         }
 
-        // Dynamic GMT/UTC offset placeholders
         for (int hour = -12; hour <= 14; hour++) {
             for (int min : new int[]{0, 30, 45}) {
                 String utcLabel = getZoneLabel("utc", hour, min);

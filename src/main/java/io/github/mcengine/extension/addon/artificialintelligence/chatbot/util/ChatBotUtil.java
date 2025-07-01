@@ -45,7 +45,10 @@ public class ChatBotUtil {
          * This serves as a quick reference and default behavior for plugin users.
          */
         List<Map<String, Object>> data = List.of(
+            // Item
             Map.of("match", Arrays.asList("What is in my hand?", "Show my held item"), "response", "You are holding: {item_in_hand}"),
+
+            // Player
             Map.of("match", Arrays.asList("What is my display name?", "Show display name"), "response", "Your display name is {player_displayname}."),
             Map.of("match", Arrays.asList("How much XP do I have?", "What is my level?"), "response", "Your experience level is {player_exp_level}."),
             Map.of("match", Arrays.asList("How hungry am I?", "What is my food level?"), "response", "Your food level is {player_food_level}."),
@@ -59,6 +62,14 @@ public class ChatBotUtil {
             Map.of("match", Arrays.asList("What is my UUID?", "Tell me my player ID"), "response", "Your UUID is {player_uuid}."),
             Map.of("match", Arrays.asList("What is my short UUID?", "Shorten my UUID"), "response", "Short UUID: {player_uuid_short}"),
             Map.of("match", Arrays.asList("What world am I in?", "Tell me my world"), "response", "You are in world: {player_world}."),
+
+            // World
+            Map.of("match", Arrays.asList("How hard is this world?", "Tell me world difficulty"), "response", "World difficulty: {world_difficulty}"),
+            Map.of("match", Arrays.asList("How many entities are in the world?"), "response", "Entities in world: {world_entity_count}"),
+            Map.of("match", Arrays.asList("How many chunks are loaded?"), "response", "Loaded chunks: {world_loaded_chunks}"),
+            Map.of("match", Arrays.asList("What is the seed?", "World seed?"), "response", "World seed: {world_seed}"),
+            Map.of("match", Arrays.asList("What time is it in-game?", "Tell me Minecraft time"), "response", "World time: {world_time}"),
+            Map.of("match", Arrays.asList("What is the weather like?", "Current weather?"), "response", "World weather: {world_weather}"),
 
             // Static time zones
             Map.of("match", Arrays.asList("What is the server time?", "Current server time"), "response", "Server time is {time_server}."),

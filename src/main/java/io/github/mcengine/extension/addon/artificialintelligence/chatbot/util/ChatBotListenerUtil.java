@@ -20,8 +20,8 @@ public class ChatBotListenerUtil {
      * @param msg           The message body to send.
      * @param receiverEmail The recipient's email address.
      */
-    public static void sendDataToEmail(Plugin plugin, String msg, String receiverEmail) {
-        FileConfiguration config = ChatBotConfigLoader.getCustomConfig(plugin);
+    public static void sendDataToEmail(Plugin plugin, String folderPath, String msg, String receiverEmail) {
+        FileConfiguration config = ChatBotConfigLoader.getCustomConfig(plugin, folderPath);
 
         String senderEmail = config.getString("mail.email");
         String senderPassword = config.getString("mail.password");

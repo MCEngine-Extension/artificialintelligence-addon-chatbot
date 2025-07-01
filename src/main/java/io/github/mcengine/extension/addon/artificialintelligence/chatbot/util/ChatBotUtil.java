@@ -25,8 +25,8 @@ public class ChatBotUtil {
      *
      * @param plugin The plugin instance used to resolve the data folder.
      */
-    public static void createSimpleFile(Plugin plugin) {
-        File dataFolder = new File(plugin.getDataFolder(), "extensions/addons/configs/MCEngineChatBot/data/");
+    public static void createSimpleFile(Plugin plugin, String folderPath) {
+        File dataFolder = new File(plugin.getDataFolder(), folderPath + "/data/");
 
         // If folder already exists, skip file creation
         if (dataFolder.exists()) {
@@ -111,8 +111,8 @@ public class ChatBotUtil {
      *
      * @param plugin The plugin instance used to determine the data folder.
      */
-    public static void createConfig(Plugin plugin) {
-        File configFile = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/config.yml");
+    public static void createConfig(Plugin plugin, String folderPath) {
+        File configFile = new File(plugin.getDataFolder(), folderPath + "/config.yml");
 
         // Skip creation if config already exists
         if (configFile.exists()) return;

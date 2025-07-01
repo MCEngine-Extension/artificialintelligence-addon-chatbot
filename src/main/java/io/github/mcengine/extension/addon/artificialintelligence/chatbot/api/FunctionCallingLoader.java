@@ -25,9 +25,9 @@ public class FunctionCallingLoader {
      *
      * @param plugin The plugin instance used for locating the data folder and logging.
      */
-    public FunctionCallingLoader(Plugin plugin, MCEngineAddOnLogger logger) {
+    public FunctionCallingLoader(Plugin plugin, String folderPath, MCEngineAddOnLogger logger) {
         IFunctionCallingLoader loader = new FunctionCallingJson(
-                new java.io.File(plugin.getDataFolder(), "extensions/addons/configs/MCEngineChatBot/data/")
+                new java.io.File(plugin.getDataFolder(), folderPath + "/data/")
         );
         mergedRules.addAll(loader.loadFunctionRules());
 

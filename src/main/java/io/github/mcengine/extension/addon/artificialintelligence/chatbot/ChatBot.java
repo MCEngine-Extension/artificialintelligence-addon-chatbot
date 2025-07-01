@@ -22,6 +22,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.List;
@@ -48,18 +49,20 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
         FunctionCallingItem.check(logger);
         FunctionCallingLoaderUtilTime.check(logger);
 
+        String folderPath = "extensions/addons/configs/MCEngineChatBot";
+
         try {
             // Initialize database table for chatbot mail
             Connection conn = MCEngineArtificialIntelligenceCommon.getApi().getDBConnection();
             ChatBotCommand.db = new ChatBotListenerUtilDB(conn, logger);
 
             // Create required file and config
-            ChatBotUtil.createSimpleFile(plugin);
-            ChatBotUtil.createConfig(plugin);
+            ChatBotUtil.createSimpleFile(plugin, folderPath);
+            ChatBotUtil.createConfig(plugin, folderPath);
 
             // Register event listener
             PluginManager pluginManager = Bukkit.getPluginManager();
-            pluginManager.registerEvents(new ChatBotListener(plugin, logger), plugin);
+            pluginManager.registerEvents(new ChatBotListener(plugin, folderPath, logger), plugin);
 
             // Reflectively access Bukkit's CommandMap
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");

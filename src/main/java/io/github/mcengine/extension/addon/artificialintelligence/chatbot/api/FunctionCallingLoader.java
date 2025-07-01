@@ -7,6 +7,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
+
+import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingItem.*;
 import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime.*;
 
 /**
@@ -23,9 +25,9 @@ public class FunctionCallingLoader {
      *
      * @param plugin The plugin instance used for locating the data folder and logging.
      */
-    public FunctionCallingLoader(Plugin plugin, MCEngineAddOnLogger logger) {
+    public FunctionCallingLoader(Plugin plugin, String folderPath, MCEngineAddOnLogger logger) {
         IFunctionCallingLoader loader = new FunctionCallingJson(
-                new java.io.File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/data/")
+                new java.io.File(plugin.getDataFolder(), folderPath + "/data/")
         );
         mergedRules.addAll(loader.loadFunctionRules());
 
@@ -71,39 +73,41 @@ public class FunctionCallingLoader {
      */
     private String applyPlaceholders(String response, Player player) {
         response = response
-                // Player info
-                .replace("{player_name}", player.getName())
-                .replace("{player_uuid}", player.getUniqueId().toString())
-                .replace("{player_uuid_short}", player.getUniqueId().toString().split("-")[0])
-                .replace("{player_displayname}", player.getDisplayName())
-                .replace("{player_ip}", player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown")
-                .replace("{player_gamemode}", player.getGameMode().name())
-                .replace("{player_world}", player.getWorld().getName())
-                .replace("{player_location}", String.format("X: %.1f, Y: %.1f, Z: %.1f",
-                        player.getLocation().getX(),
-                        player.getLocation().getY(),
-                        player.getLocation().getZ()))
-                .replace("{player_health}", String.valueOf(player.getHealth()))
-                .replace("{player_max_health}", String.valueOf(player.getMaxHealth()))
-                .replace("{player_food_level}", String.valueOf(player.getFoodLevel()))
-                .replace("{player_exp_level}", String.valueOf(player.getLevel()))
+                // Player info (alphabetically sorted)
+            .replace("{item_in_hand}", getItemInHandDetails(player))
+            .replace("{player_displayname}", player.getDisplayName())
+            .replace("{player_exp_level}", String.valueOf(player.getLevel()))
+            .replace("{player_food_level}", String.valueOf(player.getFoodLevel()))
+            .replace("{player_gamemode}", player.getGameMode().name())
+            .replace("{player_health}", String.valueOf(player.getHealth()))
+            .replace("{player_inventory}", getPlayerInventoryDetails(player))
+            .replace("{player_ip}", player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown")
+            .replace("{player_location}", String.format("X: %.1f, Y: %.1f, Z: %.1f",
+                    player.getLocation().getX(),
+                    player.getLocation().getY(),
+                    player.getLocation().getZ()))
+            .replace("{player_max_health}", String.valueOf(player.getMaxHealth()))
+            .replace("{player_name}", player.getName())
+            .replace("{player_uuid}", player.getUniqueId().toString())
+            .replace("{player_uuid_short}", player.getUniqueId().toString().split("-")[0])
+            .replace("{player_world}", player.getWorld().getName())
 
-                // Static time zones
-                .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
-                .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")))
-                .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")));
+            // Static time zones
+            .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")))
+            .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
+            .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")));
 
-        // Named time zones
+        // Named time zones (alphabetically sorted by placeholder)
         Map<String, String> namedZones = Map.ofEntries(
-                Map.entry("{time_new_york}", getFormattedTime("America/New_York")),
-                Map.entry("{time_london}", getFormattedTime("Europe/London")),
-                Map.entry("{time_tokyo}", getFormattedTime("Asia/Tokyo")),
                 Map.entry("{time_bangkok}", getFormattedTime("Asia/Bangkok")),
-                Map.entry("{time_sydney}", getFormattedTime("Australia/Sydney")),
-                Map.entry("{time_paris}", getFormattedTime("Europe/Paris")),
                 Map.entry("{time_berlin}", getFormattedTime("Europe/Berlin")),
-                Map.entry("{time_singapore}", getFormattedTime("Asia/Singapore")),
+                Map.entry("{time_london}", getFormattedTime("Europe/London")),
                 Map.entry("{time_los_angeles}", getFormattedTime("America/Los_Angeles")),
+                Map.entry("{time_new_york}", getFormattedTime("America/New_York")),
+                Map.entry("{time_paris}", getFormattedTime("Europe/Paris")),
+                Map.entry("{time_singapore}", getFormattedTime("Asia/Singapore")),
+                Map.entry("{time_sydney}", getFormattedTime("Australia/Sydney")),
+                Map.entry("{time_tokyo}", getFormattedTime("Asia/Tokyo")),
                 Map.entry("{time_toronto}", getFormattedTime("America/Toronto"))
         );
 

@@ -21,12 +21,13 @@ public class ChatBotUtil {
     /**
      * Creates the default `data.json` file containing sample chatbot rules.
      * Skips creation if the target folder already exists.
-     * The file is saved to: {@code <plugin_data_folder>/configs/addons/MCEngineChatBot/data/data.json}
+     * The file is saved to: {@code <plugin_data_folder>/<folderPath>/data/data.json}
      *
-     * @param plugin The plugin instance used to resolve the data folder.
+     * @param plugin     The plugin instance used to resolve the data folder.
+     * @param folderPath The folder path relative to the plugin data directory.
      */
-    public static void createSimpleFile(Plugin plugin) {
-        File dataFolder = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/data/");
+    public static void createSimpleFile(Plugin plugin, String folderPath) {
+        File dataFolder = new File(plugin.getDataFolder(), folderPath + "/data/");
 
         // If folder already exists, skip file creation
         if (dataFolder.exists()) {
@@ -39,57 +40,53 @@ public class ChatBotUtil {
             return;
         }
 
-        // Define default rules for chatbot as a JSON-compatible list of maps
+        /**
+         * List of chatbot example responses matched to each placeholder.
+         * This serves as a quick reference and default behavior for plugin users.
+         */
         List<Map<String, Object>> data = List.of(
-            Map.of(
-                "match", Arrays.asList(
-                    "What is my name?",
-                    "Who am I?"
-                ),
-                "response", "Your name is {player_name}."
-            ),
-            Map.of(
-                "match", Arrays.asList(
-                    "What is my uuid?",
-                    "Tell me my player ID"
-                ),
-                "response", "Your UUID is {player_uuid}."
-            ),
-            Map.of(
-                "match", Arrays.asList(
-                    "What time is it on the server?",
-                    "Tell me the server time"
-                ),
-                "response", "The current server time is {time_server}."
-            ),
-            Map.of(
-                "match", Arrays.asList(
-                    "What time is it in Bangkok?",
-                    "Tell me Bangkok time"
-                ),
-                "response", "The current time in Bangkok is {time_bangkok}."
-            ),
-            Map.of(
-                "match", Arrays.asList(
-                    "What time is it in UTC?",
-                    "Tell me the UTC time"
-                ),
-                "response", "The current UTC time is {time_utc}."
-            ),
-            Map.of(
-                "match", Arrays.asList(
-                    "What time is it in GMT+7?",
-                    "Tell me time in GMT+07:00"
-                ),
-                "response", "The current time in GMT+7 is {time_gmt_plus_07_00}."
-            ),
-            Map.of(
-                "match", Arrays.asList(
-                    "Tell me all placeholders",
-                    "Show me the AI variables"
-                ),
-                "response", "You can use: {player_name}, {player_uuid}, {time_server}, {time_utc}, {time_bangkok}, etc."
-            )
+            Map.of("match", Arrays.asList("What is in my hand?", "Show my held item"), "response", "You are holding: {item_in_hand}"),
+            Map.of("match", Arrays.asList("What is my display name?", "Show display name"), "response", "Your display name is {player_displayname}."),
+            Map.of("match", Arrays.asList("How much XP do I have?", "What is my level?"), "response", "Your experience level is {player_exp_level}."),
+            Map.of("match", Arrays.asList("How hungry am I?", "What is my food level?"), "response", "Your food level is {player_food_level}."),
+            Map.of("match", Arrays.asList("What mode am I in?", "Tell me my game mode"), "response", "You are in {player_gamemode} mode."),
+            Map.of("match", Arrays.asList("How much health do I have?", "Tell me my health"), "response", "You have {player_health} health."),
+            Map.of("match", Arrays.asList("What is in my inventory?", "List my items"), "response", "Inventory contents:\n{player_inventory}"),
+            Map.of("match", Arrays.asList("What is my IP address?", "Tell me my IP"), "response", "Your IP address is {player_ip}."),
+            Map.of("match", Arrays.asList("Where am I?", "Tell me my location"), "response", "You are at {player_location} in world {player_world}."),
+            Map.of("match", Arrays.asList("What is my max health?", "Max HP"), "response", "Your max health is {player_max_health}."),
+            Map.of("match", Arrays.asList("What is my name?", "Who am I?"), "response", "Your name is {player_name}."),
+            Map.of("match", Arrays.asList("What is my UUID?", "Tell me my player ID"), "response", "Your UUID is {player_uuid}."),
+            Map.of("match", Arrays.asList("What is my short UUID?", "Shorten my UUID"), "response", "Short UUID: {player_uuid_short}"),
+            Map.of("match", Arrays.asList("What world am I in?", "Tell me my world"), "response", "You are in world: {player_world}."),
+
+            // Static time zones
+            Map.of("match", Arrays.asList("What is the server time?", "Current server time"), "response", "Server time is {time_server}."),
+            Map.of("match", Arrays.asList("What is the UTC time?", "Tell me UTC time"), "response", "UTC time is {time_utc}."),
+            Map.of("match", Arrays.asList("What is GMT time?", "Time in GMT?"), "response", "GMT time is {time_gmt}."),
+
+            // Named time zones
+            Map.of("match", Arrays.asList("Bangkok time?", "What time is it in Bangkok?"), "response", "Bangkok time is {time_bangkok}."),
+            Map.of("match", Arrays.asList("Berlin time?", "What time is it in Berlin?"), "response", "Berlin time is {time_berlin}."),
+            Map.of("match", Arrays.asList("London time?", "What time is it in London?"), "response", "London time is {time_london}."),
+            Map.of("match", Arrays.asList("LA time?", "What time is it in Los Angeles?"), "response", "Los Angeles time is {time_los_angeles}."),
+            Map.of("match", Arrays.asList("New York time?", "What time is it in New York?"), "response", "New York time is {time_new_york}."),
+            Map.of("match", Arrays.asList("Paris time?", "What time is it in Paris?"), "response", "Paris time is {time_paris}."),
+            Map.of("match", Arrays.asList("Singapore time?", "What time is it in Singapore?"), "response", "Singapore time is {time_singapore}."),
+            Map.of("match", Arrays.asList("Sydney time?", "What time is it in Sydney?"), "response", "Sydney time is {time_sydney}."),
+            Map.of("match", Arrays.asList("Tokyo time?", "What time is it in Tokyo?"), "response", "Tokyo time is {time_tokyo}."),
+            Map.of("match", Arrays.asList("Toronto time?", "What time is it in Toronto?"), "response", "Toronto time is {time_toronto}."),
+
+            // Example for UTC offset
+            Map.of("match", Arrays.asList("What is time in GMT+7?", "Time in UTC+7?"), "response", "Time in GMT+7 is {time_gmt_plus_07_00}."),
+
+            // List placeholders
+            Map.of("match", Arrays.asList("Tell me all placeholders", "Show me the AI variables"), "response", 
+                   "Placeholders: {player_name}, {player_uuid}, {player_displayname}, {player_ip}, {player_gamemode}, "
+                   + "{player_health}, {player_max_health}, {player_food_level}, {player_exp_level}, {player_location}, "
+                   + "{player_world}, {item_in_hand}, {player_inventory}, {time_server}, {time_utc}, {time_gmt}, "
+                   + "{time_bangkok}, {time_berlin}, {time_london}, {time_los_angeles}, {time_new_york}, {time_paris}, "
+                   + "{time_singapore}, {time_sydney}, {time_tokyo}, {time_toronto}, {time_gmt_plus_07_00}")
         );
 
         // Write data to JSON file
@@ -107,12 +104,13 @@ public class ChatBotUtil {
     /**
      * Creates a default `config.yml` file for the chatbot plugin.
      * This config sets the token type to "server".
-     * File is saved to: {@code <plugin_data_folder>/configs/addons/MCEngineChatBot/config.yml}
+     * File is saved to: {@code <plugin_data_folder>/<folderPath>/config.yml}
      *
-     * @param plugin The plugin instance used to determine the data folder.
+     * @param plugin     The plugin instance used to determine the data folder.
+     * @param folderPath The folder path relative to the plugin data directory.
      */
-    public static void createConfig(Plugin plugin) {
-        File configFile = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/config.yml");
+    public static void createConfig(Plugin plugin, String folderPath) {
+        File configFile = new File(plugin.getDataFolder(), folderPath + "/config.yml");
 
         // Skip creation if config already exists
         if (configFile.exists()) return;

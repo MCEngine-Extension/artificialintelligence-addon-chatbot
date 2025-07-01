@@ -31,6 +31,7 @@ import java.util.UUID;
 public class ChatBotListener implements Listener {
 
     private final Plugin plugin;
+    private final String folderPath;
     private final FunctionCallingLoader functionCallingLoader;
     private final String tokenType;
 
@@ -39,11 +40,12 @@ public class ChatBotListener implements Listener {
      *
      * @param plugin The plugin instance.
      */
-    public ChatBotListener(Plugin plugin, MCEngineAddOnLogger logger) {
+    public ChatBotListener(Plugin plugin, String folderPath, MCEngineAddOnLogger logger) {
         this.plugin = plugin;
-        this.functionCallingLoader = new FunctionCallingLoader(plugin, logger);
+        this.folderPath = folderPath;
+        this.functionCallingLoader = new FunctionCallingLoader(plugin, folderPath, logger);
 
-        File configFile = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/config.yml");
+        File configFile = new File(plugin.getDataFolder(), folderPath + "/config.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
         this.tokenType = config.getString("token.type", "server");
@@ -75,7 +77,7 @@ public class ChatBotListener implements Listener {
         if (originalMessage.equalsIgnoreCase("quit")) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 String history = MCEngineArtificialIntelligenceApiUtilBotManager.get(player);
-                FileConfiguration config = ChatBotConfigLoader.getCustomConfig(plugin);
+                FileConfiguration config = ChatBotConfigLoader.getCustomConfig(plugin, folderPath);
 
                 boolean mailEnabled = config.getBoolean("mail.enable", false);
 
@@ -84,7 +86,7 @@ public class ChatBotListener implements Listener {
                     String playerEmail = ChatBotCommand.db.getPlayerEmail(playerId);
 
                     if (playerEmail != null && !playerEmail.isEmpty()) {
-                        ChatBotListenerUtil.sendDataToEmail(plugin, history, playerEmail);
+                        ChatBotListenerUtil.sendDataToEmail(plugin, folderPath, history, playerEmail);
 
                         Bukkit.getScheduler().runTask(plugin, () ->
                             player.sendMessage(ChatColor.RED + "Your chat history has been sent to your email!")

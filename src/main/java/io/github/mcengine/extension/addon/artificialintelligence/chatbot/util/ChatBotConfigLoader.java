@@ -25,8 +25,8 @@ public class ChatBotConfigLoader {
      * @param plugin The plugin instance.
      * @return The loaded YAML configuration.
      */
-    public static FileConfiguration getCustomConfig(Plugin plugin) {
-        File configFile = new File(plugin.getDataFolder(), "configs/addons/MCEngineChatBot/config.yml");
+    public static FileConfiguration getCustomConfig(Plugin plugin, String folderPath) {
+        File configFile = new File(plugin.getDataFolder(), folderPath + "/config.yml");
         return YamlConfiguration.loadConfiguration(configFile);
     }
 }

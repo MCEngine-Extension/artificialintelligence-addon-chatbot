@@ -1,7 +1,7 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener;
 
 
-import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;

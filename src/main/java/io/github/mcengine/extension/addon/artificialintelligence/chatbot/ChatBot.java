@@ -2,8 +2,8 @@ package io.github.mcengine.extension.addon.artificialintelligence.chatbot;
 
 import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.api.artificialintelligence.extension.addon.IMCEngineArtificialIntelligenceAddOn;
-import io.github.mcengine.api.mcengine.MCEngineApi;
-import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.MCEngineApi;
+import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
 
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime;
@@ -110,7 +110,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
         }
 
         // Check for updates
-        MCEngineApi.checkUpdate(plugin, logger.getLogger(), "[AddOn] [MCEngineChatBot] ",
+        MCEngineApi.checkUpdate(plugin, logger.getLogger(),
             "github", "MCEngine-Extension", "artificialintelligence-addon-chat-bot",
             plugin.getConfig().getString("github.token", "null"));
     }

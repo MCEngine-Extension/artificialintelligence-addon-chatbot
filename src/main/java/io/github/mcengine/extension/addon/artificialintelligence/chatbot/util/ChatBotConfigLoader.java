@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util;
 
-import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

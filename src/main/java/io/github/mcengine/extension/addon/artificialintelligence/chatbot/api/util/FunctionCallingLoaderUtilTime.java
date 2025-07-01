@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util;
 
-import io.github.mcengine.api.mcengine.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

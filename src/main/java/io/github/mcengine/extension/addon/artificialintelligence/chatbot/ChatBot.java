@@ -6,6 +6,7 @@ import io.github.mcengine.api.core.MCEngineApi;
 import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
 
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingItem;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener.ChatBotListener;
@@ -44,6 +45,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
         MCEngineAddOnLogger logger = new MCEngineAddOnLogger(plugin, "MCEngineChatBot");
         ChatBotConfigLoader.check(logger);
         FunctionCallingLoader.check(logger);
+        FunctionCallingItem.check(logger);
         FunctionCallingLoaderUtilTime.check(logger);
 
         try {

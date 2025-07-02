@@ -45,6 +45,11 @@ public class ChatBotUtil {
          * This serves as a quick reference and default behavior for plugin users.
          */
         List<Map<String, Object>> data = List.of(
+            // Entity
+            Map.of("match", Arrays.asList("What mobs are near me?", "List nearby entities"), "response", "Nearby entities:\n{nearby_entities_count}"),
+            Map.of("match", Arrays.asList("How many pigs nearby?", "Nearby pig count"), "response", "There are {nearby_pig_count} pigs near you."),
+            Map.of("match", Arrays.asList("How many zombies nearby?", "Nearby zombie count"), "response", "There are {nearby_zombie_count} zombies near you."),
+
             // Item
             Map.of("match", Arrays.asList("What is in my hand?", "Show my held item"), "response", "You are holding: {item_in_hand}"),
 

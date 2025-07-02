@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingEntity.*;
 import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingItem.*;
 import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingLoaderUtilTime.*;
 import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingWorld.*;
@@ -101,6 +102,11 @@ public class FunctionCallingLoader {
         World world = player.getWorld();
 
         response = response
+                // Nearby entity count
+                .replace("{nearby_entities_count}", getNearbyEntities(plugin, player, 20))
+                .replace("{nearby_zombie_count}", getNearbyEntities(plugin, player, "zombie", 20))
+                .replace("{nearby_pig_count}", getNearbyEntities(plugin, player, "pig", 20))
+
                 // Player-related placeholders (sorted A–Z)
                 .replace("{item_in_hand}", getItemInHandDetails(player))
                 .replace("{player_displayname}", player.getDisplayName())

@@ -44,6 +44,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
     public void onLoad(Plugin plugin) {
         MCEngineAddOnLogger logger = new MCEngineAddOnLogger(plugin, "MCEngineChatBot");
         ChatBotConfigLoader.check(logger);
+        FunctionCallingEntity.check(logger);
         FunctionCallingLoader.check(logger);
         FunctionCallingItem.check(logger);
         FunctionCallingLoaderUtilTime.check(logger);

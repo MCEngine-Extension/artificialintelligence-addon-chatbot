@@ -1,14 +1,12 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener;
 
-
-import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
+import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
 import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtil;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotConfigLoader;
-
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -24,21 +22,37 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Listens for chat messages from players who are currently in a conversation with the AI.
- * Cancels regular chat output and routes the input to the AI bot manager for processing.
- * Handles session termination and optional email delivery of chat history.
+ * Listener that intercepts player chat to handle AI chatbot sessions.
+ * Cancels normal chat behavior and forwards messages to the AI backend.
  */
 public class ChatBotListener implements Listener {
 
+    /**
+     * The plugin instance associated with this listener.
+     */
     private final Plugin plugin;
+
+    /**
+     * Folder path for configuration and assets.
+     */
     private final String folderPath;
+
+    /**
+     * Loader for detecting function calls from player messages.
+     */
     private final FunctionCallingLoader functionCallingLoader;
+
+    /**
+     * The token type to use when interacting with the AI (e.g., "server", "player").
+     */
     private final String tokenType;
 
     /**
-     * Constructs the ChatBotListener and loads configuration for token type.
+     * Constructs a new ChatBotListener.
      *
      * @param plugin The plugin instance.
+     * @param folderPath The folder path used for config and resource loading.
+     * @param logger Addon logger used during function loading.
      */
     public ChatBotListener(Plugin plugin, String folderPath, MCEngineAddOnLogger logger) {
         this.plugin = plugin;
@@ -52,7 +66,7 @@ public class ChatBotListener implements Listener {
     }
 
     /**
-     * Intercepts player chat messages for active AI sessions.
+     * Handles player chat messages and routes them to the AI if in a session.
      *
      * @param event The async player chat event.
      */
@@ -73,7 +87,7 @@ public class ChatBotListener implements Listener {
             return;
         }
 
-        // Handle quit command
+        // Handle 'quit' command
         if (originalMessage.equalsIgnoreCase("quit")) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 String history = MCEngineArtificialIntelligenceApiUtilBotManager.get(player);
@@ -105,7 +119,7 @@ public class ChatBotListener implements Listener {
             return;
         }
 
-        // Normal message handling
+        // Handle normal message
         player.sendMessage(ChatColor.GRAY + "[You → AI]: " + ChatColor.WHITE + originalMessage);
 
         List<String> matchedResponses = functionCallingLoader.match(player, originalMessage);

@@ -24,9 +24,7 @@ public class FunctionCallingLoader {
     /** The main plugin instance for file lookups and context. */
     private final Plugin plugin;
 
-    /**
-     * List of all rules loaded from `.json` files, used to determine chatbot responses.
-     */
+    /** List of all rules loaded from `.json` files, used to determine chatbot responses. */
     private final List<FunctionRule> mergedRules = new ArrayList<>();
 
     /**
@@ -106,8 +104,11 @@ public class FunctionCallingLoader {
         // --- Entity Placeholder Map (auto-generated would be best, but explicit for clarity) ---
         Map<String, Supplier<String>> placeholders = new LinkedHashMap<>();
 
+        // Count & Detail placeholders for all nearby entities
         placeholders.put("{nearby_entities_count}", () -> getNearbyEntities(plugin, player, 20));
-        // Individual entity types (could be looped for further optimization if entity list provided)
+        placeholders.put("{nearby_entities_detail}", () -> getNearbyEntities(plugin, player, 20));
+
+        // Individual entity types (count and detail)
         String[] entityTypes = {
             "allay", "armadillo", "axolotl", "bat", "bee", "blaze", "bogged", "breeze",
             "camel", "cat", "cave_spider", "chicken", "cod", "cow", "creeper", "dolphin",
@@ -124,6 +125,7 @@ public class FunctionCallingLoader {
         };
         for (String type : entityTypes) {
             placeholders.put("{nearby_" + type + "_count}", () -> getNearbyEntities(plugin, player, type, 20));
+            placeholders.put("{nearby_" + type + "_detail}", () -> getNearbyEntities(plugin, player, type, 20));
         }
 
         // --- Player-related placeholders (sorted) ---

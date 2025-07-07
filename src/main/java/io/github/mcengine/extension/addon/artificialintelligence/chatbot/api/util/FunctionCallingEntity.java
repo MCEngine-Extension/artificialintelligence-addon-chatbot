@@ -24,7 +24,7 @@ public class FunctionCallingEntity {
     /**
      * Checks whether this class is loaded.
      *
-     * @param plugin The plugin instance used for logging.
+     * @param logger The logger instance used for logging.
      */
     public static void check(MCEngineAddOnLogger logger) {
         logger.info("Class: FunctionCallingEntity is loadded.");
@@ -64,12 +64,13 @@ public class FunctionCallingEntity {
     /**
      * Returns the count of nearby entities of a given type around a player.
      * If the entity type is invalid or not supported in this server version, a warning is returned.
+     * If the placeholder is used as "..._detail", a detailed string is returned instead of count.
      *
      * @param plugin     The plugin instance used to run main-thread safe tasks.
      * @param player     The player to use as the center for scanning.
      * @param entityType The entity type to filter (e.g., "ZOMBIE", "PIG").
      * @param radius     The radius to scan for nearby entities.
-     * @return The count of matched entity type, or a warning string if the type is invalid.
+     * @return The count or a multiline detail string, or a warning if type is invalid.
      */
     public static String getNearbyEntities(Plugin plugin, Player player, String entityType, int radius) {
         if (Bukkit.isPrimaryThread()) {
@@ -118,27 +119,41 @@ public class FunctionCallingEntity {
     }
 
     /**
-     * Synchronously counts entities of a specific type near a player.
+     * Synchronously counts entities of a specific type near a player, or lists their details if entityType ends with "_detail".
      *
      * @param player     The player to scan around.
      * @param entityType The string name of the entity type.
      * @param radius     The radius to scan.
-     * @return The count as a string, or error message if type is not valid.
+     * @return The count as a string, or detail string, or error message if type is not valid.
      */
     private static String getNearbyEntitiesSync(Player player, String entityType, int radius) {
+        // Support detail: if the placeholder is used as "{nearby_<type>_detail}"
+        boolean detail = entityType.endsWith("_detail");
+        String baseType = detail ? entityType.substring(0, entityType.length() - "_detail".length()) : entityType;
+
         EntityType type;
         try {
-            type = EntityType.valueOf(entityType.toUpperCase());
+            type = EntityType.valueOf(baseType.toUpperCase());
         } catch (IllegalArgumentException e) {
             return "This entity type isn't supported.";
         }
 
         List<Entity> nearbyEntities = player.getNearbyEntities(radius, radius, radius);
+        List<Entity> filtered = new java.util.ArrayList<>();
+        for (Entity e : nearbyEntities) {
+            if (e.getType() == type) filtered.add(e);
+        }
 
-        long count = nearbyEntities.stream()
-                .filter(e -> e.getType() == type)
-                .count();
-
-        return String.valueOf(count);
+        if (detail) {
+            if (filtered.isEmpty()) return "No nearby " + baseType.replace('_', ' ') + "s found.";
+            StringBuilder sb = new StringBuilder("Nearby " + baseType.replace('_', ' ') + "s:\n");
+            for (Entity entity : filtered) {
+                double distance = entity.getLocation().distance(player.getLocation());
+                sb.append("- ").append(entity.getType().name()).append(" (").append(String.format("%.1f", distance)).append(" blocks away)\n");
+            }
+            return sb.toString().trim();
+        } else {
+            return String.valueOf(filtered.size());
+        }
     }
 }

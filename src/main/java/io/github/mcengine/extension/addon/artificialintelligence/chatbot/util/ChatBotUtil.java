@@ -62,16 +62,23 @@ public class ChatBotUtil {
             "wither_skeleton", "wolf", "zoglin", "zombie", "zombie_horse", "zombie_villager",
             "zombified_piglin"
         };
-        // Generic nearby entities
+        // Generic nearby entities (count)
         data.add(Map.of(
             "match", Arrays.asList("What mobs are near me?", "List nearby entities"),
             "response", "Nearby entities:\n{nearby_entities_count}"
         ));
-        // One rule for each entity type
+        // Generic nearby entities (detail)
+        data.add(Map.of(
+            "match", Arrays.asList("Show nearby entities detail", "List nearby entity details"),
+            "response", "Nearby entities:\n{nearby_entities_detail}"
+        ));
+        // One rule for each entity type: count and detail
         for (String type : entityTypes) {
             String nameFormat = type.replace('_', ' ');
             String match1 = "How many " + nameFormat + "s nearby?";
             String match2 = "Nearby " + nameFormat + " count";
+            String detail1 = "Show nearby " + nameFormat + " detail";
+            String detail2 = "Nearby " + nameFormat + " details";
             String response = "There are {nearby_" + type + "_count} " + nameFormat + "s near you.";
             // Pluralization: If the entity name ends with 's' already (e.g., "axolotls"), don't add another 's'
             if (nameFormat.endsWith("s")) {
@@ -80,6 +87,11 @@ public class ChatBotUtil {
             data.add(Map.of(
                 "match", Arrays.asList(match1, match2),
                 "response", response
+            ));
+            // Add detail placeholder for this entity
+            data.add(Map.of(
+                "match", Arrays.asList(detail1, detail2),
+                "response", "Nearby " + nameFormat + "s:\n{nearby_" + type + "_detail}"
             ));
         }
 

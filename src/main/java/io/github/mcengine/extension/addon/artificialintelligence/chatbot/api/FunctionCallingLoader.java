@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.FunctionCallingEntity.*;
@@ -20,6 +21,7 @@ import static io.github.mcengine.extension.addon.artificialintelligence.chatbot.
  */
 public class FunctionCallingLoader {
 
+    /** The main plugin instance for file lookups and context. */
     private final Plugin plugin;
 
     /**
@@ -76,7 +78,6 @@ public class FunctionCallingLoader {
                 }
             }
         }
-
         return results;
     }
 
@@ -93,6 +94,7 @@ public class FunctionCallingLoader {
 
     /**
      * Replaces placeholders in a chatbot response with real-time values from the player or server.
+     * Optimization: Uses a map of placeholder keys and value suppliers for easier maintenance and better performance.
      *
      * @param response The raw response containing placeholders.
      * @param player   The player whose data is used for substitution.
@@ -101,119 +103,60 @@ public class FunctionCallingLoader {
     private String applyPlaceholders(String response, Player player) {
         World world = player.getWorld();
 
-        response = response
-                // Nearby entity count
-                .replace("{nearby_entities_count}", getNearbyEntities(plugin, player, 20))
-                .replace("{nearby_allay_count}", getNearbyEntities(plugin, player, "allay", 20))
-                .replace("{nearby_armadillo_count}", getNearbyEntities(plugin, player, "armadillo", 20))
-                .replace("{nearby_axolotl_count}", getNearbyEntities(plugin, player, "axolotl", 20))
-                .replace("{nearby_bat_count}", getNearbyEntities(plugin, player, "bat", 20))
-                .replace("{nearby_bee_count}", getNearbyEntities(plugin, player, "bee", 20))
-                .replace("{nearby_blaze_count}", getNearbyEntities(plugin, player, "blaze", 20))
-                .replace("{nearby_bogged_count}", getNearbyEntities(plugin, player, "bogged", 20))
-                .replace("{nearby_breeze_count}", getNearbyEntities(plugin, player, "breeze", 20))
-                .replace("{nearby_camel_count}", getNearbyEntities(plugin, player, "camel", 20))
-                .replace("{nearby_cat_count}", getNearbyEntities(plugin, player, "cat", 20))
-                .replace("{nearby_cave_spider_count}", getNearbyEntities(plugin, player, "cave_spider", 20))
-                .replace("{nearby_chicken_count}", getNearbyEntities(plugin, player, "chicken", 20))
-                .replace("{nearby_cod_count}", getNearbyEntities(plugin, player, "cod", 20))
-                .replace("{nearby_cow_count}", getNearbyEntities(plugin, player, "cow", 20))
-                .replace("{nearby_creeper_count}", getNearbyEntities(plugin, player, "creeper", 20))
-                .replace("{nearby_dolphin_count}", getNearbyEntities(plugin, player, "dolphin", 20))
-                .replace("{nearby_donkey_count}", getNearbyEntities(plugin, player, "donkey", 20))
-                .replace("{nearby_drowned_count}", getNearbyEntities(plugin, player, "drowned", 20))
-                .replace("{nearby_elder_guardian_count}", getNearbyEntities(plugin, player, "elder_guardian", 20))
-                .replace("{nearby_ender_dragon_count}", getNearbyEntities(plugin, player, "ender_dragon", 20))
-                .replace("{nearby_endermite_count}", getNearbyEntities(plugin, player, "endermite", 20))
-                .replace("{nearby_evoker_count}", getNearbyEntities(plugin, player, "evoker", 20))
-                .replace("{nearby_fox_count}", getNearbyEntities(plugin, player, "fox", 20))
-                .replace("{nearby_frog_count}", getNearbyEntities(plugin, player, "frog", 20))
-                .replace("{nearby_ghast_count}", getNearbyEntities(plugin, player, "ghast", 20))
-                .replace("{nearby_glow_squid_count}", getNearbyEntities(plugin, player, "glow_squid", 20))
-                .replace("{nearby_goat_count}", getNearbyEntities(plugin, player, "goat", 20))
-                .replace("{nearby_guardian_count}", getNearbyEntities(plugin, player, "guardian", 20))
-                .replace("{nearby_hoglin_count}", getNearbyEntities(plugin, player, "hoglin", 20))
-                .replace("{nearby_horse_count}", getNearbyEntities(plugin, player, "horse", 20))
-                .replace("{nearby_husk_count}", getNearbyEntities(plugin, player, "husk", 20))
-                .replace("{nearby_illusioner_count}", getNearbyEntities(plugin, player, "illusioner", 20))
-                .replace("{nearby_iron_golem_count}", getNearbyEntities(plugin, player, "iron_golem", 20))
-                .replace("{nearby_llama_count}", getNearbyEntities(plugin, player, "llama", 20))
-                .replace("{nearby_magma_cube_count}", getNearbyEntities(plugin, player, "magma_cube", 20))
-                .replace("{nearby_mooshroom_count}", getNearbyEntities(plugin, player, "mooshroom", 20))
-                .replace("{nearby_mule_count}", getNearbyEntities(plugin, player, "mule", 20))
-                .replace("{nearby_ocelot_count}", getNearbyEntities(plugin, player, "ocelot", 20))
-                .replace("{nearby_panda_count}", getNearbyEntities(plugin, player, "panda", 20))
-                .replace("{nearby_parrot_count}", getNearbyEntities(plugin, player, "parrot", 20))
-                .replace("{nearby_phantom_count}", getNearbyEntities(plugin, player, "phantom", 20))
-                .replace("{nearby_pig_count}", getNearbyEntities(plugin, player, "pig", 20))
-                .replace("{nearby_piglin_count}", getNearbyEntities(plugin, player, "piglin", 20))
-                .replace("{nearby_piglin_brute_count}", getNearbyEntities(plugin, player, "piglin_brute", 20))
-                .replace("{nearby_pillager_count}", getNearbyEntities(plugin, player, "pillager", 20))
-                .replace("{nearby_polar_bear_count}", getNearbyEntities(plugin, player, "polar_bear", 20))
-                .replace("{nearby_pufferfish_count}", getNearbyEntities(plugin, player, "pufferfish", 20))
-                .replace("{nearby_rabbit_count}", getNearbyEntities(plugin, player, "rabbit", 20))
-                .replace("{nearby_ravager_count}", getNearbyEntities(plugin, player, "ravager", 20))
-                .replace("{nearby_salmon_count}", getNearbyEntities(plugin, player, "salmon", 20))
-                .replace("{nearby_sheep_count}", getNearbyEntities(plugin, player, "sheep", 20))
-                .replace("{nearby_shulker_count}", getNearbyEntities(plugin, player, "shulker", 20))
-                .replace("{nearby_silverfish_count}", getNearbyEntities(plugin, player, "silverfish", 20))
-                .replace("{nearby_skeleton_count}", getNearbyEntities(plugin, player, "skeleton", 20))
-                .replace("{nearby_skeleton_horse_count}", getNearbyEntities(plugin, player, "skeleton_horse", 20))
-                .replace("{nearby_slime_count}", getNearbyEntities(plugin, player, "slime", 20))
-                .replace("{nearby_sniffer_count}", getNearbyEntities(plugin, player, "sniffer", 20))
-                .replace("{nearby_snow_golem_count}", getNearbyEntities(plugin, player, "snow_golem", 20))
-                .replace("{nearby_spider_count}", getNearbyEntities(plugin, player, "spider", 20))
-                .replace("{nearby_squid_count}", getNearbyEntities(plugin, player, "squid", 20))
-                .replace("{nearby_stray_count}", getNearbyEntities(plugin, player, "stray", 20))
-                .replace("{nearby_strider_count}", getNearbyEntities(plugin, player, "strider", 20))
-                .replace("{nearby_trader_llama_count}", getNearbyEntities(plugin, player, "trader_llama", 20))
-                .replace("{nearby_tropical_fish_count}", getNearbyEntities(plugin, player, "tropical_fish", 20))
-                .replace("{nearby_turtle_count}", getNearbyEntities(plugin, player, "turtle", 20))
-                .replace("{nearby_vex_count}", getNearbyEntities(plugin, player, "vex", 20))
-                .replace("{nearby_vindicator_count}", getNearbyEntities(plugin, player, "vindicator", 20))
-                .replace("{nearby_warden_count}", getNearbyEntities(plugin, player, "warden", 20))
-                .replace("{nearby_witch_count}", getNearbyEntities(plugin, player, "witch", 20))
-                .replace("{nearby_wither_count}", getNearbyEntities(plugin, player, "wither", 20))
-                .replace("{nearby_wither_skeleton_count}", getNearbyEntities(plugin, player, "wither_skeleton", 20))
-                .replace("{nearby_wolf_count}", getNearbyEntities(plugin, player, "wolf", 20))
-                .replace("{nearby_zoglin_count}", getNearbyEntities(plugin, player, "zoglin", 20))
-                .replace("{nearby_zombie_count}", getNearbyEntities(plugin, player, "zombie", 20))
-                .replace("{nearby_zombie_horse_count}", getNearbyEntities(plugin, player, "zombie_horse", 20))
-                .replace("{nearby_zombie_villager_count}", getNearbyEntities(plugin, player, "zombie_villager", 20))
-                .replace("{nearby_zombified_piglin_count}", getNearbyEntities(plugin, player, "zombified_piglin", 20))
+        // --- Entity Placeholder Map (auto-generated would be best, but explicit for clarity) ---
+        Map<String, Supplier<String>> placeholders = new LinkedHashMap<>();
 
-                // Player-related placeholders (sorted A–Z)
-                .replace("{item_in_hand}", getItemInHandDetails(player))
-                .replace("{player_displayname}", player.getDisplayName())
-                .replace("{player_exp_level}", String.valueOf(player.getLevel()))
-                .replace("{player_food_level}", String.valueOf(player.getFoodLevel()))
-                .replace("{player_gamemode}", player.getGameMode().name())
-                .replace("{player_health}", String.valueOf(player.getHealth()))
-                .replace("{player_inventory}", getPlayerInventoryDetails(player))
-                .replace("{player_ip}", player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown")
-                .replace("{player_location}", String.format("X: %.1f, Y: %.1f, Z: %.1f",
-                        player.getLocation().getX(),
-                        player.getLocation().getY(),
-                        player.getLocation().getZ()))
-                .replace("{player_max_health}", String.valueOf(player.getMaxHealth()))
-                .replace("{player_name}", player.getName())
-                .replace("{player_uuid}", player.getUniqueId().toString())
-                .replace("{player_uuid_short}", player.getUniqueId().toString().split("-")[0])
-                .replace("{player_world}", world.getName())
+        placeholders.put("{nearby_entities_count}", () -> getNearbyEntities(plugin, player, 20));
+        // Individual entity types (could be looped for further optimization if entity list provided)
+        String[] entityTypes = {
+            "allay", "armadillo", "axolotl", "bat", "bee", "blaze", "bogged", "breeze",
+            "camel", "cat", "cave_spider", "chicken", "cod", "cow", "creeper", "dolphin",
+            "donkey", "drowned", "elder_guardian", "ender_dragon", "endermite", "evoker",
+            "fox", "frog", "ghast", "glow_squid", "goat", "guardian", "hoglin", "horse",
+            "husk", "illusioner", "iron_golem", "llama", "magma_cube", "mooshroom", "mule",
+            "ocelot", "panda", "parrot", "phantom", "pig", "piglin", "piglin_brute",
+            "pillager", "polar_bear", "pufferfish", "rabbit", "ravager", "salmon", "sheep",
+            "shulker", "silverfish", "skeleton", "skeleton_horse", "slime", "sniffer",
+            "snow_golem", "spider", "squid", "stray", "strider", "trader_llama",
+            "tropical_fish", "turtle", "vex", "vindicator", "warden", "witch", "wither",
+            "wither_skeleton", "wolf", "zoglin", "zombie", "zombie_horse", "zombie_villager",
+            "zombified_piglin"
+        };
+        for (String type : entityTypes) {
+            placeholders.put("{nearby_" + type + "_count}", () -> getNearbyEntities(plugin, player, type, 20));
+        }
 
-                // World and environment placeholders (sorted A–Z)
-                .replace("{world_difficulty}", world.getDifficulty().name())
-                .replace("{world_entity_count}", getSafeEntityCount(plugin, world))
-                .replace("{world_loaded_chunks}", String.valueOf(world.getLoadedChunks().length))
-                .replace("{world_seed}", String.valueOf(world.getSeed()))
-                .replace("{world_time}", String.valueOf(world.getTime()))
-                .replace("{world_weather}", world.hasStorm() ? "Raining" : "Clear")
+        // --- Player-related placeholders (sorted) ---
+        placeholders.put("{item_in_hand}", () -> getItemInHandDetails(player));
+        placeholders.put("{player_displayname}", player::getDisplayName);
+        placeholders.put("{player_exp_level}", () -> String.valueOf(player.getLevel()));
+        placeholders.put("{player_food_level}", () -> String.valueOf(player.getFoodLevel()));
+        placeholders.put("{player_gamemode}", () -> player.getGameMode().name());
+        placeholders.put("{player_health}", () -> String.valueOf(player.getHealth()));
+        placeholders.put("{player_inventory}", () -> getPlayerInventoryDetails(player));
+        placeholders.put("{player_ip}", () -> player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown");
+        placeholders.put("{player_location}", () -> String.format("X: %.1f, Y: %.1f, Z: %.1f",
+                player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ()));
+        placeholders.put("{player_max_health}", () -> String.valueOf(player.getMaxHealth()));
+        placeholders.put("{player_name}", player::getName);
+        placeholders.put("{player_uuid}", () -> player.getUniqueId().toString());
+        placeholders.put("{player_uuid_short}", () -> player.getUniqueId().toString().split("-")[0]);
+        placeholders.put("{player_world}", () -> world.getName());
 
-                // Static time zones
-                .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")))
-                .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
-                .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")));
+        // --- World and environment placeholders (sorted) ---
+        placeholders.put("{world_difficulty}", () -> world.getDifficulty().name());
+        placeholders.put("{world_entity_count}", () -> getSafeEntityCount(plugin, world));
+        placeholders.put("{world_loaded_chunks}", () -> String.valueOf(world.getLoadedChunks().length));
+        placeholders.put("{world_seed}", () -> String.valueOf(world.getSeed()));
+        placeholders.put("{world_time}", () -> String.valueOf(world.getTime()));
+        placeholders.put("{world_weather}", () -> world.hasStorm() ? "Raining" : "Clear");
 
+        // --- Static time zones ---
+        placeholders.put("{time_gmt}", () -> getFormattedTime(TimeZone.getTimeZone("GMT")));
+        placeholders.put("{time_server}", () -> getFormattedTime(TimeZone.getDefault()));
+        placeholders.put("{time_utc}", () -> getFormattedTime(TimeZone.getTimeZone("UTC")));
+
+        // --- Named zones ---
         Map<String, String> namedZones = Map.ofEntries(
                 Map.entry("{time_bangkok}", getFormattedTime("Asia/Bangkok")),
                 Map.entry("{time_berlin}", getFormattedTime("Europe/Berlin")),
@@ -227,10 +170,17 @@ public class FunctionCallingLoader {
                 Map.entry("{time_toronto}", getFormattedTime("America/Toronto"))
         );
 
+        // --- Apply simple placeholders ---
+        for (Map.Entry<String, Supplier<String>> entry : placeholders.entrySet()) {
+            response = response.replace(entry.getKey(), entry.getValue().get());
+        }
+
+        // --- Apply named time zones ---
         for (Map.Entry<String, String> entry : namedZones.entrySet()) {
             response = response.replace(entry.getKey(), entry.getValue());
         }
 
+        // --- Apply {time_gmt+X:00}, {time_utc+X:00}, etc. for -12..+14 (with :00, :30, :45) ---
         for (int hour = -12; hour <= 14; hour++) {
             for (int min : new int[]{0, 30, 45}) {
                 String utcLabel = getZoneLabel("utc", hour, min);

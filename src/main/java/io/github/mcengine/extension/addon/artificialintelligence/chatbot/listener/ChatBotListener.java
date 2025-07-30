@@ -20,9 +20,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Listener that intercepts player chat to handle AI chatbot sessions.
@@ -146,13 +144,15 @@ public class ChatBotListener implements Listener {
         final String platform = MCEngineArtificialIntelligenceApiUtilBotManager.getPlatform(player);
         final String model = MCEngineArtificialIntelligenceApiUtilBotManager.getModel(player);
 
+        // Mark the player as waiting to prevent duplicate task execution
+        api.setWaiting(player, true);
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 JsonObject response;
 
                 if ("server".equalsIgnoreCase(tokenType)) {
                     String context = MCEngineArtificialIntelligenceApiUtilBotManager.get(player);
-                    String prompt = context + "[Player]: " + preparedMessage;
                     response = api.getResponse(platform, model, context, preparedMessage);
                 } else if ("player".equalsIgnoreCase(tokenType)) {
                     String token = api.getPlayerToken(player.getUniqueId().toString(), platform);
@@ -160,7 +160,6 @@ public class ChatBotListener implements Listener {
                         throw new IllegalStateException("No token found for player.");
                     }
                     String context = MCEngineArtificialIntelligenceApiUtilBotManager.get(player);
-                    String prompt = context + "[Player]: " + preparedMessage;
                     response = api.getResponse(platform, model, token, context, preparedMessage);
                 } else {
                     throw new IllegalArgumentException("Unknown tokenType: " + tokenType);
@@ -186,6 +185,9 @@ public class ChatBotListener implements Listener {
                 Bukkit.getScheduler().runTask(plugin, () ->
                     player.sendMessage(ChatColor.RED + "❌ Failed to process your AI message.")
                 );
+            } finally {
+                // Unmark the player as waiting regardless of success or failure
+                api.setWaiting(player, false);
             }
         });
     }

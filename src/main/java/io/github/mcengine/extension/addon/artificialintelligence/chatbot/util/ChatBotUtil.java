@@ -199,6 +199,7 @@ public class ChatBotUtil {
         );
 
         config.set("token.type", "server");
+        config.set("ai.system.prompt", "You're an AI assistant designed to help players in this Minecraft game!");
         config.set("mail.enable", false);
         config.set("mail.type", "gmail");
         config.set("mail.email", "your-email@gmail.com");

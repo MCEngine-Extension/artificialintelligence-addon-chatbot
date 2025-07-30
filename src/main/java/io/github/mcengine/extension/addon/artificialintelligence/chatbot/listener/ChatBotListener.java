@@ -1,5 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener;
 
+import com.google.gson.JsonObject;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
@@ -19,7 +20,9 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Listener that intercepts player chat to handle AI chatbot sessions.
@@ -48,11 +51,16 @@ public class ChatBotListener implements Listener {
     private final String tokenType;
 
     /**
+     * System prompt prepended to AI context.
+     */
+    private final String systemPrompt;
+
+    /**
      * Constructs a new ChatBotListener.
      *
-     * @param plugin The plugin instance.
+     * @param plugin     The plugin instance.
      * @param folderPath The folder path used for config and resource loading.
-     * @param logger Addon logger used during function loading.
+     * @param logger     Addon logger used during function loading.
      */
     public ChatBotListener(Plugin plugin, String folderPath, MCEngineExtensionLogger logger) {
         this.plugin = plugin;
@@ -63,6 +71,7 @@ public class ChatBotListener implements Listener {
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
         this.tokenType = config.getString("token.type", "server");
+        this.systemPrompt = config.getString("ai.system.prompt", "");
     }
 
     /**
@@ -119,23 +128,65 @@ public class ChatBotListener implements Listener {
             return;
         }
 
-        // Handle normal message
+        // Handle normal AI message
         player.sendMessage(ChatColor.GRAY + "[You → AI]: " + ChatColor.WHITE + originalMessage);
 
         List<String> matchedResponses = functionCallingLoader.match(player, originalMessage);
-        String finalMessage = originalMessage;
-
+        final String preparedMessage;
         if (!matchedResponses.isEmpty()) {
             StringBuilder sb = new StringBuilder(originalMessage).append("\n\n[Function Info]\n");
             for (String response : matchedResponses) {
                 sb.append("- ").append(response).append("\n");
             }
-            finalMessage = sb.toString();
+            preparedMessage = sb.toString();
+        } else {
+            preparedMessage = originalMessage;
         }
 
-        String platform = MCEngineArtificialIntelligenceApiUtilBotManager.getPlatform(player);
-        String model = MCEngineArtificialIntelligenceApiUtilBotManager.getModel(player);
+        final String platform = MCEngineArtificialIntelligenceApiUtilBotManager.getPlatform(player);
+        final String model = MCEngineArtificialIntelligenceApiUtilBotManager.getModel(player);
 
-        api.runBotTask(player, tokenType, platform, model, finalMessage);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                JsonObject response;
+
+                if ("server".equalsIgnoreCase(tokenType)) {
+                    String context = MCEngineArtificialIntelligenceApiUtilBotManager.get(player);
+                    String prompt = context + "[Player]: " + preparedMessage;
+                    response = api.getResponse(platform, model, context, preparedMessage);
+                } else if ("player".equalsIgnoreCase(tokenType)) {
+                    String token = api.getPlayerToken(player.getUniqueId().toString(), platform);
+                    if (token == null || token.isEmpty()) {
+                        throw new IllegalStateException("No token found for player.");
+                    }
+                    String context = MCEngineArtificialIntelligenceApiUtilBotManager.get(player);
+                    String prompt = context + "[Player]: " + preparedMessage;
+                    response = api.getResponse(platform, model, token, context, preparedMessage);
+                } else {
+                    throw new IllegalArgumentException("Unknown tokenType: " + tokenType);
+                }
+
+                String reply = api.getCompletionContent(response);
+                int tokensUsed = api.getTotalTokenUsage(response);
+
+                // Update conversation
+                MCEngineArtificialIntelligenceApiUtilBotManager.append(player, "[Player]: " + originalMessage);
+                MCEngineArtificialIntelligenceApiUtilBotManager.append(player, "[AI]: " + reply);
+
+                // Send AI reply
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    player.sendMessage(ChatColor.GOLD + "[AI → You]: " + ChatColor.RESET + reply);
+                    if (tokensUsed >= 0) {
+                        player.sendMessage(ChatColor.GREEN + "[Tokens Used] " + ChatColor.WHITE + tokensUsed);
+                    }
+                });
+
+            } catch (Exception e) {
+                plugin.getLogger().warning("AI chat failed for " + player.getName() + ": " + e.getMessage());
+                Bukkit.getScheduler().runTask(plugin, () ->
+                    player.sendMessage(ChatColor.RED + "❌ Failed to process your AI message.")
+                );
+            }
+        });
     }
 }

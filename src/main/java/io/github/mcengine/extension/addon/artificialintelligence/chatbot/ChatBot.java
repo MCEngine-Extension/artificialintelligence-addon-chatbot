@@ -125,4 +125,7 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
     public void setId(String id) {
         MCEngineCoreApi.setId("mcengine-chatbot");
     }
+
+    @Override
+    public void onDisload(Plugin plugin) {}
 }

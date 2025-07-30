@@ -1,7 +1,7 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener;
 
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
-import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
@@ -54,7 +54,7 @@ public class ChatBotListener implements Listener {
      * @param folderPath The folder path used for config and resource loading.
      * @param logger Addon logger used during function loading.
      */
-    public ChatBotListener(Plugin plugin, String folderPath, MCEngineAddOnLogger logger) {
+    public ChatBotListener(Plugin plugin, String folderPath, MCEngineExtensionLogger logger) {
         this.plugin = plugin;
         this.folderPath = folderPath;
         this.functionCallingLoader = new FunctionCallingLoader(plugin, folderPath, logger);

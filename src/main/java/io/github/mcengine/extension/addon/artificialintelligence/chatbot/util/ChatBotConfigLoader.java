@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util;
 
-import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,7 +15,7 @@ import java.io.File;
  */
 public class ChatBotConfigLoader {
 
-    public static void check(MCEngineAddOnLogger logger) {
+    public static void check(MCEngineExtensionLogger logger) {
         logger.info("Class: ChatBotConfigLoader is loadded.");
     }
 

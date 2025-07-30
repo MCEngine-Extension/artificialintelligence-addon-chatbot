@@ -2,8 +2,8 @@ package io.github.mcengine.extension.addon.artificialintelligence.chatbot;
 
 import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.api.artificialintelligence.extension.addon.IMCEngineArtificialIntelligenceAddOn;
-import io.github.mcengine.api.core.MCEngineApi;
-import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.MCEngineCoreApi;
+import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.*;
@@ -42,7 +42,8 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
      */
     @Override
     public void onLoad(Plugin plugin) {
-        MCEngineAddOnLogger logger = new MCEngineAddOnLogger(plugin, "MCEngineChatBot");
+        MCEngineExtensionLogger logger = new MCEngineExtensionLogger(plugin, "AddOn", "MCEngineChatBot");
+
         ChatBotConfigLoader.check(logger);
         FunctionCallingEntity.check(logger);
         FunctionCallingLoader.check(logger);
@@ -116,12 +117,12 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
         }
 
         // Check for updates
-        MCEngineApi.checkUpdate(plugin, logger.getLogger(),
+        MCEngineCoreApi.checkUpdate(plugin, logger.getLogger(),
             "github", "MCEngine-Extension", "artificialintelligence-addon-chat-bot",
             plugin.getConfig().getString("github.token", "null"));
     }
 
     public void setId(String id) {
-        MCEngineApi.setId("mcengine-chatbot");
+        MCEngineCoreApi.setId("mcengine-chatbot");
     }
 }

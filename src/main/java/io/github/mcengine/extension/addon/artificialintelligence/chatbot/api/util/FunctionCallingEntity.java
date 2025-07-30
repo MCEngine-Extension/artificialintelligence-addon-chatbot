@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util;
 
-import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -26,7 +26,7 @@ public class FunctionCallingEntity {
      *
      * @param logger The logger instance used for logging.
      */
-    public static void check(MCEngineAddOnLogger logger) {
+    public static void check(MCEngineExtensionLogger logger) {
         logger.info("Class: FunctionCallingEntity is loadded.");
     }
 

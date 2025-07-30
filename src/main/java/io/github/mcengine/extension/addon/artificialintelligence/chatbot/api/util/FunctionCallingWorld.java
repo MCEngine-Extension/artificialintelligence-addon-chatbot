@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util;
 
-import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class FunctionCallingWorld {
 
-    public static void check(MCEngineAddOnLogger logger) {
+    public static void check(MCEngineExtensionLogger logger) {
         logger.info("Class: FunctionCallingWorld is loadded.");
     }
 

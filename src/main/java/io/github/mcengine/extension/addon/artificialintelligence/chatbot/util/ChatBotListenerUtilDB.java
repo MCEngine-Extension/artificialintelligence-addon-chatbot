@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util;
 
-import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +15,7 @@ import java.util.UUID;
 public class ChatBotListenerUtilDB {
 
     private final Connection conn;
-    private final MCEngineAddOnLogger logger;
+    private final MCEngineExtensionLogger logger;
 
     /**
      * Constructs a new database utility for chatbot email storage.
@@ -23,7 +23,7 @@ public class ChatBotListenerUtilDB {
      * @param conn   The database connection to use.
      * @param logger The logger for reporting errors or info.
      */
-    public ChatBotListenerUtilDB(Connection conn, MCEngineAddOnLogger logger) {
+    public ChatBotListenerUtilDB(Connection conn, MCEngineExtensionLogger logger) {
         this.conn = conn;
         this.logger = logger;
         createTable();

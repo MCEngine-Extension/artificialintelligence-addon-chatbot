@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util;
 
-import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,7 +12,7 @@ import java.util.TimeZone;
  */
 public class FunctionCallingLoaderUtilTime {
 
-    public static void check(MCEngineAddOnLogger logger) {
+    public static void check(MCEngineExtensionLogger logger) {
         logger.info("Class: FunctionCallingLoaderUtilTime is loadded.");
     }
 

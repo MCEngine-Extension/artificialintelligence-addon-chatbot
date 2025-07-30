@@ -1,6 +1,6 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.api;
 
-import io.github.mcengine.api.core.extension.addon.MCEngineAddOnLogger;
+import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.json.FunctionCallingJson;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -116,7 +116,7 @@ public class FunctionCallingLoader {
      * @param folderPath The folder path relative to the plugin data directory.
      * @param logger     The logger instance used for logging info to console.
      */
-    public FunctionCallingLoader(Plugin plugin, String folderPath, MCEngineAddOnLogger logger) {
+    public FunctionCallingLoader(Plugin plugin, String folderPath, MCEngineExtensionLogger logger) {
         this.plugin = plugin;
         IFunctionCallingLoader loader = new FunctionCallingJson(
                 new java.io.File(plugin.getDataFolder(), folderPath + "/data/")
@@ -131,7 +131,7 @@ public class FunctionCallingLoader {
      *
      * @param logger The logger to use for output.
      */
-    public static void check(MCEngineAddOnLogger logger) {
+    public static void check(MCEngineExtensionLogger logger) {
         logger.info("Class: FunctionCallingLoader is loaded.");
     }
 

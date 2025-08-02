@@ -5,8 +5,6 @@ import io.github.mcengine.api.artificialintelligence.extension.addon.IMCEngineAr
 import io.github.mcengine.api.core.MCEngineCoreApi;
 import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.util.*;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener.ChatBotListener;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
@@ -43,13 +41,6 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
     @Override
     public void onLoad(Plugin plugin) {
         MCEngineExtensionLogger logger = new MCEngineExtensionLogger(plugin, "AddOn", "MCEngineChatBot");
-
-        ChatBotConfigLoader.check(logger);
-        FunctionCallingEntity.check(logger);
-        FunctionCallingLoader.check(logger);
-        FunctionCallingItem.check(logger);
-        FunctionCallingLoaderUtilTime.check(logger);
-        FunctionCallingWorld.check(logger);
 
         String folderPath = "extensions/addons/configs/MCEngineChatBot";
 

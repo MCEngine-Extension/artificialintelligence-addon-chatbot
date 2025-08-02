@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.api.FunctionCallingLoader;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotConfigLoader;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtil;
@@ -39,11 +38,6 @@ public class ChatBotListener implements Listener {
     private final String folderPath;
 
     /**
-     * Loader for detecting function calls from player messages.
-     */
-    private final FunctionCallingLoader functionCallingLoader;
-
-    /**
      * The token type to use when interacting with the AI (e.g., "server", "player").
      */
     private final String tokenType;
@@ -63,7 +57,6 @@ public class ChatBotListener implements Listener {
     public ChatBotListener(Plugin plugin, String folderPath, MCEngineExtensionLogger logger) {
         this.plugin = plugin;
         this.folderPath = folderPath;
-        this.functionCallingLoader = new FunctionCallingLoader(plugin, folderPath, logger);
 
         File configFile = new File(plugin.getDataFolder(), folderPath + "/config.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
@@ -129,14 +122,10 @@ public class ChatBotListener implements Listener {
         // Handle normal AI message
         player.sendMessage(ChatColor.GRAY + "[You → AI]: " + ChatColor.WHITE + originalMessage);
 
-        List<String> matchedResponses = functionCallingLoader.match(player, originalMessage);
+        String match = api.getMessageMatch(player, originalMessage);
         final String preparedMessage;
-        if (!matchedResponses.isEmpty()) {
-            StringBuilder sb = new StringBuilder(originalMessage).append("\n\n[Function Info]\n");
-            for (String response : matchedResponses) {
-                sb.append("- ").append(response).append("\n");
-            }
-            preparedMessage = sb.toString();
+        if (match != null) {
+            preparedMessage = originalMessage + "\n\n[Function Info]\n- " + match;
         } else {
             preparedMessage = originalMessage;
         }

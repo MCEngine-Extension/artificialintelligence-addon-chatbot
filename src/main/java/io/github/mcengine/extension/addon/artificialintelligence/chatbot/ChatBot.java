@@ -50,7 +50,6 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
             ChatBotCommand.db = new ChatBotListenerUtilDB(conn, logger);
 
             // Create required file and config
-            ChatBotUtil.createSimpleFile(plugin, folderPath);
             ChatBotUtil.createConfig(plugin, folderPath);
 
             // Register event listener

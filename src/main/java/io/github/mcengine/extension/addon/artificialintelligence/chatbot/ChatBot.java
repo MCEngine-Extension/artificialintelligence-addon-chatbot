@@ -13,20 +13,23 @@ import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.Ch
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotUtil;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
+import java.io.File;
 import java.sql.Connection;
 
 /**
  * Main class for the MCEngineChatBot AddOn.
- * <p>
- * Registers the 'chatbot' subcommand of /ai and event listeners using the MCEngine dispatcher system.
- * Also initializes the chatbot configuration and database setup.
+ *
+ * <p>Registers the 'chatbot' subcommand of /ai and event listeners using the MCEngine dispatcher system.
+ * Also initializes the chatbot configuration and database setup.</p>
  */
 public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
+
+    /** The relative path where the ChatBot config is stored. */
+    private final String folderPath = "extensions/addons/configs/MCEngineChatBot";
 
     /**
      * Initializes the ChatBot AddOn.
@@ -39,16 +42,21 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
         MCEngineExtensionLogger logger = new MCEngineExtensionLogger(plugin, "AddOn", "MCEngineChatBot");
 
         ChatBotConfigLoader.check(logger);
+        ChatBotUtil.createConfig(plugin, folderPath);
 
-        String folderPath = "extensions/addons/configs/MCEngineChatBot";
+        File configFile = new File(plugin.getDataFolder(), folderPath + "/config.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+        String licenseType = config.getString("license", "free");
+
+        if (!"free".equalsIgnoreCase(licenseType)) {
+            logger.warning("License is not 'free'. Disabling ChatBot AddOn.");
+            return;
+        }
 
         try {
             // Initialize database for chatbot usage (emails, logs, etc.)
             Connection conn = MCEngineArtificialIntelligenceCommon.getApi().getDBConnection();
             ChatBotCommand.db = new ChatBotListenerUtilDB(conn, logger);
-
-            // Create required config files
-            ChatBotUtil.createConfig(plugin, folderPath);
 
             // Register events
             PluginManager pluginManager = Bukkit.getPluginManager();

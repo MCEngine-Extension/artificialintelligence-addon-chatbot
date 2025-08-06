@@ -48,6 +48,7 @@ public class ChatBotUtil {
             "  mail.owner: Optional fallback address (currently not used)."
         );
 
+        config.set("license", "free");
         config.set("token.type", "server");
         config.set("ai.system.prompt", "You're an AI assistant designed to help players in this Minecraft game!");
         config.set("mail.enable", false);

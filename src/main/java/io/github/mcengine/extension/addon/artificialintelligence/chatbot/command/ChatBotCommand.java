@@ -4,6 +4,7 @@ import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialInte
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtilDB;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -41,7 +42,7 @@ public class ChatBotCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cOnly players can use this command.");
+            sender.sendMessage(ChatColor.RED + "Only players can use this command.");
             return true;
         }
 
@@ -52,18 +53,18 @@ public class ChatBotCommand implements CommandExecutor {
             String email = args[3];
             boolean success = db.setPlayerEmail(playerId, email);
             if (success) {
-                player.sendMessage("§aYour email has been saved successfully.");
+                player.sendMessage(ChatColor.GREEN + "Your email has been saved successfully.");
             } else {
-                player.sendMessage("§cInvalid email format or database error.");
+                player.sendMessage(ChatColor.RED + "Invalid email format or database error.");
             }
             return true;
         }
 
         // Validate minimum args
         if (args.length < 3) {
-            player.sendMessage("§cUsage:");
-            player.sendMessage("§7/ai chatbot {platform} {model}");
-            player.sendMessage("§7/ai chatbot set email {your@email.com}");
+            player.sendMessage(ChatColor.RED + "Usage:");
+            player.sendMessage(ChatColor.GRAY + "/ai chatbot {platform} {model}");
+            player.sendMessage(ChatColor.GRAY + "/ai chatbot set email {your@email.com}");
             return true;
         }
 
@@ -71,7 +72,7 @@ public class ChatBotCommand implements CommandExecutor {
         String platform = args[1];
 
         if (args.length == 2) {
-            player.sendMessage("§cMissing model name. Usage: /ai chatbot " + platform + " <model>");
+            player.sendMessage(ChatColor.RED + "Missing model name. Usage: /ai chatbot " + platform + " <model>");
             return true;
         }
 
@@ -81,13 +82,14 @@ public class ChatBotCommand implements CommandExecutor {
         Map<String, Map<String, ?>> registeredModels = MCEngineArtificialIntelligenceApiUtilAi.getAllModels();
 
         if (!registeredModels.containsKey(platform)) {
-            player.sendMessage("§cUnknown platform: §f" + platform);
+            player.sendMessage(ChatColor.RED + "Unknown platform: " + ChatColor.WHITE + platform);
             return true;
         }
 
         Map<String, ?> modelsForPlatform = registeredModels.get(platform);
         if (!modelsForPlatform.containsKey(model)) {
-            player.sendMessage("§cUnknown model: §f" + model + " §7for platform §f" + platform);
+            player.sendMessage(ChatColor.RED + "Unknown model: " + ChatColor.WHITE + model +
+                    ChatColor.GRAY + " for platform " + ChatColor.WHITE + platform);
             return true;
         }
 
@@ -96,8 +98,8 @@ public class ChatBotCommand implements CommandExecutor {
         MCEngineArtificialIntelligenceApiUtilBotManager.startConversation(player);
         MCEngineArtificialIntelligenceApiUtilBotManager.activate(player);
 
-        player.sendMessage("§aYou are now chatting with the AI.");
-        player.sendMessage("§7Type your message in chat. Type 'quit' to end the conversation.");
+        player.sendMessage(ChatColor.GREEN + "You are now chatting with the AI.");
+        player.sendMessage(ChatColor.GRAY + "Type your message in chat. Type 'quit' to end the conversation.");
         return true;
     }
 }

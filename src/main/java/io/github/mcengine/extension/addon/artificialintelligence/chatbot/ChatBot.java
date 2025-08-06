@@ -1,34 +1,30 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot;
 
-import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 import io.github.mcengine.api.artificialintelligence.extension.addon.IMCEngineArtificialIntelligenceAddOn;
 import io.github.mcengine.api.core.MCEngineCoreApi;
 import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
+import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command.ChatBotCommand;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener.ChatBotListener;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotConfigLoader;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtilDB;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotUtil;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotConfigLoader;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-import java.io.File;
-import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.util.List;
 
 /**
  * Main class for the MCEngineChatBot AddOn.
  * <p>
- * Registers the /chatbot command, event listeners, and initializes
- * configuration and database table for email storage.
+ * Registers the 'chatbot' subcommand of /ai and event listeners using the MCEngine dispatcher system.
+ * Also initializes the chatbot configuration and database setup.
  */
 public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
 
@@ -42,80 +38,55 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
     public void onLoad(Plugin plugin) {
         MCEngineExtensionLogger logger = new MCEngineExtensionLogger(plugin, "AddOn", "MCEngineChatBot");
 
+        ChatBotConfigLoader.check(logger);
+
         String folderPath = "extensions/addons/configs/MCEngineChatBot";
 
         try {
-            // Initialize database table for chatbot mail
+            // Initialize database for chatbot usage (emails, logs, etc.)
             Connection conn = MCEngineArtificialIntelligenceCommon.getApi().getDBConnection();
             ChatBotCommand.db = new ChatBotListenerUtilDB(conn, logger);
 
-            // Create required file and config
+            // Create required config files
             ChatBotUtil.createConfig(plugin, folderPath);
 
-            // Register event listener
+            // Register events
             PluginManager pluginManager = Bukkit.getPluginManager();
             pluginManager.registerEvents(new ChatBotListener(plugin, folderPath, logger), plugin);
 
-            // Reflectively access Bukkit's CommandMap
-            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            commandMapField.setAccessible(true);
-            CommandMap commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
+            // Register dispatcher command under the "chatbot" subcommand of /ai
+            String namespace = "ai";
+            String subcommand = "chatbot";
 
-            // Define the /chatbot command
-            Command chatbotCommand = new Command("chatbot") {
-                private final ChatBotCommand handler = new ChatBotCommand();
-                private final ChatBotTabCompleter completer = new ChatBotTabCompleter();
+            MCEngineArtificialIntelligenceCommon api = MCEngineArtificialIntelligenceCommon.getApi();
+            api.registerSubCommand(namespace, subcommand, new ChatBotCommand());
+            api.registerSubTabCompleter(namespace, subcommand, new ChatBotTabCompleter());
 
-                /**
-                 * Handles execution of the /chatbot command.
-                 *
-                 * @param sender The command sender.
-                 * @param label  The command label.
-                 * @param args   Command arguments.
-                 * @return true if successful.
-                 */
-                @Override
-                public boolean execute(CommandSender sender, String label, String[] args) {
-                    return handler.onCommand(sender, this, label, args);
-                }
-
-                /**
-                 * Handles tab-completion for the /chatbot command.
-                 *
-                 * @param sender The command sender.
-                 * @param alias  The alias used.
-                 * @param args   The current arguments.
-                 * @return A list of possible completions.
-                 */
-                @Override
-                public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-                    return completer.onTabComplete(sender, this, alias, args);
-                }
-            };
-
-            chatbotCommand.setDescription("Interact with the chatbot AI.");
-            chatbotCommand.setUsage("/chatbot {platform} {model} {message...}");
-
-            // Dynamically register the /chatbot command
-            commandMap.register(plugin.getName().toLowerCase(), chatbotCommand);
-
-            logger.info("Enabled successfully.");
+            logger.info("ChatBot dispatcher subcommand registered successfully.");
 
         } catch (Exception e) {
             logger.warning("Failed to initialize ChatBot AddOn: " + e.getMessage());
             e.printStackTrace();
         }
-
-        // Check for updates
-        MCEngineCoreApi.checkUpdate(plugin, logger.getLogger(),
-            "github", "MCEngine-Extension", "artificialintelligence-addon-chat-bot",
-            plugin.getConfig().getString("github.token", "null"));
     }
 
+    /**
+     * Sets the identifier for this ChatBot AddOn.
+     *
+     * @param id the unique identifier string
+     */
+    @Override
     public void setId(String id) {
         MCEngineCoreApi.setId("mcengine-chatbot");
     }
 
+    /**
+     * Called when the plugin is disabled or the AddOn is being unloaded.
+     *
+     * @param plugin the Bukkit plugin instance
+     */
     @Override
-    public void onDisload(Plugin plugin) {}
+    public void onDisload(Plugin plugin) {
+        // No custom shutdown logic needed.
+    }
 }

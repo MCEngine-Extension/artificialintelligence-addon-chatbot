@@ -8,28 +8,28 @@ import org.bukkit.command.TabCompleter;
 import java.util.*;
 
 /**
- * Tab completer for the /chatbot command.
+ * Tab completer for /ai chatbot subcommand.
  * <p>
  * Supports suggestions for:
- * - /chatbot {platform} {model}
- * - /chatbot set email {your@email.com}
+ * - /ai chatbot set email &lt;your@email.com&gt;
+ * - /ai chatbot &lt;platform&gt; &lt;model&gt;
  */
 public class ChatBotTabCompleter implements TabCompleter {
 
     /**
-     * Provides tab completion suggestions for the /chatbot command.
+     * Provides suggestions for /ai chatbot subcommand.
      *
-     * @param sender  The sender of the command.
-     * @param command The command object.
-     * @param label   The command label.
-     * @param args    The arguments passed to the command.
-     * @return A list of suggestions based on current input.
+     * @param sender  The command sender.
+     * @param command The command being run.
+     * @param label   The command alias.
+     * @param args    The arguments passed after "/ai chatbot"
+     * @return A list of completions or null for none.
      */
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         Map<String, Map<String, ?>> models = MCEngineArtificialIntelligenceApiUtilAi.getAllModels();
 
-        // /chatbot <first-arg>
+        // /ai chatbot <first>
         if (args.length == 1) {
             List<String> suggestions = new ArrayList<>(models.keySet());
             suggestions.add("set");
@@ -37,17 +37,17 @@ public class ChatBotTabCompleter implements TabCompleter {
             return filterPrefix(suggestions, args[0]);
         }
 
-        // /chatbot set <second-arg>
+        // /ai chatbot set <second>
         if (args.length == 2 && args[0].equalsIgnoreCase("set")) {
             return filterPrefix(List.of("email"), args[1]);
         }
 
-        // /chatbot set email <email-text> → no tab suggestion
+        // /ai chatbot set email <email> — no suggestions
         if (args.length == 3 && args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("email")) {
             return Collections.emptyList();
         }
 
-        // /chatbot <platform> <model>
+        // /ai chatbot <platform> <model>
         if (args.length == 2) {
             String platform = args[0];
             if (!models.containsKey(platform)) return Collections.emptyList();
@@ -61,11 +61,11 @@ public class ChatBotTabCompleter implements TabCompleter {
     }
 
     /**
-     * Filters a list of options to match the input prefix.
+     * Filters tab completion results by prefix.
      *
-     * @param options The list of possible values.
-     * @param prefix  The input to match.
-     * @return A filtered list of suggestions.
+     * @param options List of options to filter.
+     * @param prefix  The input to filter by.
+     * @return Filtered suggestions list.
      */
     private List<String> filterPrefix(List<String> options, String prefix) {
         List<String> result = new ArrayList<>();

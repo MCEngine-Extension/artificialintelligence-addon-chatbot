@@ -1,40 +1,42 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.command;
 
+import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilAi;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtilDB;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
- * Handles the execution of the /chatbot command, allowing players
- * to either start a conversation with the AI or register their email address.
- *
- * Supported command usage:
+ * Subcommand handler for /ai chatbot.
+ * <p>
+ * Handles:
  * <ul>
- *     <li>/chatbot set email your@email.com</li>
- *     <li>/chatbot {platform} {model}</li>
+ *     <li>/ai chatbot set email your@email.com</li>
+ *     <li>/ai chatbot &lt;platform&gt; &lt;model&gt;</li>
  * </ul>
  */
 public class ChatBotCommand implements CommandExecutor {
 
     /**
-     * Static reference to the database utility class.
-     * Must be initialized in the plugin's main class.
+     * Shared database instance for chatbot-specific data (e.g., player email).
+     * Must be initialized before use.
      */
     public static ChatBotListenerUtilDB db;
 
     /**
-     * Executes the /chatbot command.
+     * Handles execution of the /ai chatbot subcommand.
      *
-     * @param sender  The source of the command.
+     * @param sender  The sender of the command.
      * @param command The command object.
-     * @param label   The alias of the command.
-     * @param args    The passed command arguments.
-     * @return true if the command was processed successfully.
+     * @param label   The command alias used.
+     * @param args    Arguments passed after "/ai chatbot"
+     * @return true if successfully handled.
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -45,9 +47,9 @@ public class ChatBotCommand implements CommandExecutor {
 
         UUID playerId = player.getUniqueId();
 
-        // /chatbot set email your@email.com
-        if (args.length >= 3 && args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("email")) {
-            String email = args[2];
+        // Handle: /ai chatbot set email <email>
+        if (args.length >= 4 && args[1].equalsIgnoreCase("set") && args[2].equalsIgnoreCase("email")) {
+            String email = args[3];
             boolean success = db.setPlayerEmail(playerId, email);
             if (success) {
                 player.sendMessage("§aYour email has been saved successfully.");
@@ -57,17 +59,39 @@ public class ChatBotCommand implements CommandExecutor {
             return true;
         }
 
-        // /chatbot {platform} {model}
-        if (args.length < 2) {
+        // Validate minimum args
+        if (args.length < 3) {
             player.sendMessage("§cUsage:");
-            player.sendMessage("§7/chatbot {platform} {model}");
-            player.sendMessage("§7/chatbot set email {your@email.com}");
+            player.sendMessage("§7/ai chatbot {platform} {model}");
+            player.sendMessage("§7/ai chatbot set email {your@email.com}");
             return true;
         }
 
-        String platform = args[0];
-        String model = args[1];
+        // Platform and model arguments
+        String platform = args[1];
 
+        if (args.length == 2) {
+            player.sendMessage("§cMissing model name. Usage: /ai chatbot " + platform + " <model>");
+            return true;
+        }
+
+        String model = args[2];
+
+        // Get registered models
+        Map<String, Map<String, ?>> registeredModels = MCEngineArtificialIntelligenceApiUtilAi.getAllModels();
+
+        if (!registeredModels.containsKey(platform)) {
+            player.sendMessage("§cUnknown platform: §f" + platform);
+            return true;
+        }
+
+        Map<String, ?> modelsForPlatform = registeredModels.get(platform);
+        if (!modelsForPlatform.containsKey(model)) {
+            player.sendMessage("§cUnknown model: §f" + model + " §7for platform §f" + platform);
+            return true;
+        }
+
+        // All validations passed → Start conversation
         MCEngineArtificialIntelligenceApiUtilBotManager.setModel(player, platform, model);
         MCEngineArtificialIntelligenceApiUtilBotManager.startConversation(player);
         MCEngineArtificialIntelligenceApiUtilBotManager.activate(player);

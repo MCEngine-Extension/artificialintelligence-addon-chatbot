@@ -18,8 +18,9 @@
       },
       "extensions": [
         "ms-azuretools.vscode-docker",
-        "MCEngine.mcengine-vscode-extension-pack"
+        "MCEngine.github-pack"
       ]
     }
   }
+
 }

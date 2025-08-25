@@ -15,10 +15,6 @@ import java.io.File;
  */
 public class ChatBotConfigLoader {
 
-    public static void check(MCEngineExtensionLogger logger) {
-        logger.info("Class: ChatBotConfigLoader is loadded.");
-    }
-
     /**
      * Loads the chatbot config from the custom path.
      *

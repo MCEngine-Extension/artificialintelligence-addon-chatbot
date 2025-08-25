@@ -41,7 +41,6 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
     public void onLoad(Plugin plugin) {
         MCEngineExtensionLogger logger = new MCEngineExtensionLogger(plugin, "AddOn", "MCEngineChatBot");
 
-        ChatBotConfigLoader.check(logger);
         ChatBotUtil.createConfig(plugin, folderPath);
 
         File configFile = new File(plugin.getDataFolder(), folderPath + "/config.yml");

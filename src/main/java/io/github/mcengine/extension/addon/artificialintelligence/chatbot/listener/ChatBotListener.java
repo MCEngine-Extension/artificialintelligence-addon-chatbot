@@ -23,40 +23,54 @@ import java.util.UUID;
 
 /**
  * Listener that intercepts player chat to handle AI chatbot sessions.
- * Cancels normal chat behavior and forwards messages to the AI backend.
+ * <p>
+ * Responsibilities:
+ * <ul>
+ *   <li>Gate normal chat when a player is in an AI session.</li>
+ *   <li>Forward messages to the AI backend using the configured token type.</li>
+ *   <li>Handle special commands (e.g., {@code quit}) and optional email export.</li>
+ *   <li>Log operational details via {@link MCEngineExtensionLogger} with contextual prefixes.</li>
+ * </ul>
  */
 public class ChatBotListener implements Listener {
 
     /**
      * The plugin instance associated with this listener.
+     * Used for scheduler dispatch and data-folder resolution.
      */
     private final Plugin plugin;
 
     /**
-     * Folder path for configuration and assets.
+     * Folder path for configuration and assets (relative to the plugin data folder).
      */
     private final String folderPath;
 
     /**
-     * The token type to use when interacting with the AI (e.g., "server", "player").
+     * The token type to use when interacting with the AI (e.g., "server" or "player").
      */
     private final String tokenType;
 
     /**
-     * System prompt prepended to AI context.
+     * System prompt prepended to AI context (optional; may be empty).
      */
     private final String systemPrompt;
+
+    /**
+     * Extension-aware logger that prefixes messages with plugin / context info.
+     */
+    private final MCEngineExtensionLogger logger;
 
     /**
      * Constructs a new ChatBotListener.
      *
      * @param plugin     The plugin instance.
-     * @param folderPath The folder path used for config and resource loading.
-     * @param logger     Addon logger used during function loading.
+     * @param folderPath The folder path used for config and resource loading (relative to plugin data folder).
+     * @param logger     Extension logger used for contextual logging.
      */
     public ChatBotListener(Plugin plugin, String folderPath, MCEngineExtensionLogger logger) {
         this.plugin = plugin;
         this.folderPath = folderPath;
+        this.logger = logger;
 
         File configFile = new File(plugin.getDataFolder(), folderPath + "/config.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
@@ -66,7 +80,7 @@ public class ChatBotListener implements Listener {
     }
 
     /**
-     * Handles player chat messages and routes them to the AI if in a session.
+     * Handles player chat messages and routes them to the AI if the player is currently in a session.
      *
      * @param event The async player chat event.
      */
@@ -106,7 +120,7 @@ public class ChatBotListener implements Listener {
                             player.sendMessage(ChatColor.RED + "Your chat history has been sent to your email!")
                         );
                     } else {
-                        plugin.getLogger().warning("mail.enable is true, but no email is registered for player: " + player.getName());
+                        logger.warning("mail.enable is true, but no email is registered for player: " + player.getName());
                     }
                 }
 
@@ -170,7 +184,7 @@ public class ChatBotListener implements Listener {
                 });
 
             } catch (Exception e) {
-                plugin.getLogger().warning("AI chat failed for " + player.getName() + ": " + e.getMessage());
+                logger.warning("AI chat failed for " + player.getName() + ": " + e.getMessage());
                 Bukkit.getScheduler().runTask(plugin, () ->
                     player.sendMessage(ChatColor.RED + "❌ Failed to process your AI message.")
                 );

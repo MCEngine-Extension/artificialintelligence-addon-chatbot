@@ -2,8 +2,7 @@ package io.github.mcengine.extension.addon.artificialintelligence.chatbot.comman
 
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilAi;
 import io.github.mcengine.api.artificialintelligence.util.MCEngineArtificialIntelligenceApiUtilBotManager;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotListenerUtilDB;
-
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db.ChatBotDB;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,10 +24,10 @@ import java.util.UUID;
 public class ChatBotCommand implements CommandExecutor {
 
     /**
-     * Shared database instance for chatbot-specific data (e.g., player email).
+     * Shared database accessor for chatbot-specific data (e.g., player email).
      * Must be initialized before use.
      */
-    public static ChatBotListenerUtilDB db;
+    public static ChatBotDB db;
 
     /**
      * Handles execution of the /ai chatbot subcommand.

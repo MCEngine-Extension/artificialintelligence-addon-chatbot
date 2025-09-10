@@ -1,4 +1,4 @@
-package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.database;
 
 import java.util.UUID;
 

@@ -8,10 +8,10 @@ import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener.ChatBotListener;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotUtil;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db.ChatBotDB;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db.ChatBotDBMySQL;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db.ChatBotDBPostgreSQL;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db.ChatBotDBSQLite;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.ChatBotDB;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.mysql.ChatBotDBMySQL;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.postgresql.ChatBotDBPostgreSQL;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.sqlite.ChatBotDBSQLite;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;

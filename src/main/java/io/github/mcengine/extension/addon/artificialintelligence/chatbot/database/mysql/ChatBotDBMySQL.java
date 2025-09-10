@@ -1,7 +1,8 @@
-package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.mysql;
 
 import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.ChatBotDB;
 
 import java.util.UUID;
 

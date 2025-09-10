@@ -1,14 +1,15 @@
-package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db;
+package io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.sqlite;
 
 import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
 import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.ChatBotDB;
 
 import java.util.UUID;
 
 /**
- * PostgreSQL implementation of {@link ChatBotDB}.
+ * SQLite implementation of {@link ChatBotDB}.
  */
-public class ChatBotDBPostgreSQL implements ChatBotDB {
+public class ChatBotDBSQLite implements ChatBotDB {
 
     /** Logger for diagnostics. */
     private final MCEngineExtensionLogger logger;
@@ -18,7 +19,7 @@ public class ChatBotDBPostgreSQL implements ChatBotDB {
      *
      * @param logger logger wrapper
      */
-    public ChatBotDBPostgreSQL(MCEngineExtensionLogger logger) {
+    public ChatBotDBSQLite(MCEngineExtensionLogger logger) {
         this.logger = logger;
     }
 
@@ -32,9 +33,9 @@ public class ChatBotDBPostgreSQL implements ChatBotDB {
             """;
         try {
             MCEngineArtificialIntelligenceCommon.getApi().executeQuery(sql);
-            if (logger != null) logger.info("[ChatBotDB] PostgreSQL schema ensured.");
+            if (logger != null) logger.info("[ChatBotDB] SQLite schema ensured.");
         } catch (Exception e) {
-            if (logger != null) logger.warning("[ChatBotDB] PostgreSQL schema creation failed: " + e.getMessage());
+            if (logger != null) logger.warning("[ChatBotDB] SQLite schema creation failed: " + e.getMessage());
         }
     }
 
@@ -45,13 +46,13 @@ public class ChatBotDBPostgreSQL implements ChatBotDB {
         try {
             return MCEngineArtificialIntelligenceCommon.getApi().getValue(sql, String.class);
         } catch (Exception e) {
-            if (logger != null) logger.warning("[ChatBotDB] PostgreSQL get email failed: " + e.getMessage());
+            if (logger != null) logger.warning("[ChatBotDB] SQLite get email failed: " + e.getMessage());
             return null;
         }
     }
 
     @Override
-    public boolean setPlayerEmail(UUID playerId, String email) {
+       public boolean setPlayerEmail(UUID playerId, String email) {
         if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             if (logger != null) logger.warning("Rejected invalid email for " + playerId + ": " + email);
             return false;
@@ -66,7 +67,7 @@ public class ChatBotDBPostgreSQL implements ChatBotDB {
             MCEngineArtificialIntelligenceCommon.getApi().executeQuery(ins);
             return true;
         } catch (Exception e) {
-            if (logger != null) logger.warning("[ChatBotDB] PostgreSQL set email failed: " + e.getMessage());
+            if (logger != null) logger.warning("[ChatBotDB] SQLite set email failed: " + e.getMessage());
             return false;
         }
     }

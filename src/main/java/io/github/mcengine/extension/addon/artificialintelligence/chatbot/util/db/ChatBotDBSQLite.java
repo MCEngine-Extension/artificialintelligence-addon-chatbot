@@ -1,8 +1,8 @@
 package io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db;
 
 import io.github.mcengine.api.core.extension.logger.MCEngineExtensionLogger;
+import io.github.mcengine.common.artificialintelligence.MCEngineArtificialIntelligenceCommon;
 
-import java.sql.*;
 import java.util.UUID;
 
 /**
@@ -10,20 +10,15 @@ import java.util.UUID;
  */
 public class ChatBotDBSQLite implements ChatBotDB {
 
-    /** Active JDBC connection supplied by the AI module. */
-    private final Connection conn;
-
     /** Logger for diagnostics. */
     private final MCEngineExtensionLogger logger;
 
     /**
      * Constructs the DB helper.
      *
-     * @param conn   JDBC connection
      * @param logger logger wrapper
      */
-    public ChatBotDBSQLite(Connection conn, MCEngineExtensionLogger logger) {
-        this.conn = conn;
+    public ChatBotDBSQLite(MCEngineExtensionLogger logger) {
         this.logger = logger;
     }
 
@@ -35,47 +30,49 @@ public class ChatBotDBSQLite implements ChatBotDB {
                 email TEXT NOT NULL
             );
             """;
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.execute();
+        try {
+            MCEngineArtificialIntelligenceCommon.getApi().executeQuery(sql);
             if (logger != null) logger.info("[ChatBotDB] SQLite schema ensured.");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             if (logger != null) logger.warning("[ChatBotDB] SQLite schema creation failed: " + e.getMessage());
         }
     }
 
     @Override
     public String getPlayerEmail(UUID playerId) {
-        final String sql = "SELECT email FROM artificialintelligence_chatbot_mail WHERE player_uuid = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, playerId.toString());
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return rs.getString("email");
-            }
-        } catch (SQLException e) {
+        final String sql = "SELECT email FROM artificialintelligence_chatbot_mail " +
+                "WHERE player_uuid = '" + escape(playerId.toString()) + "' LIMIT 1;";
+        try {
+            return MCEngineArtificialIntelligenceCommon.getApi().getValue(sql, String.class);
+        } catch (Exception e) {
             if (logger != null) logger.warning("[ChatBotDB] SQLite get email failed: " + e.getMessage());
+            return null;
         }
-        return null;
     }
 
     @Override
-    public boolean setPlayerEmail(UUID playerId, String email) {
+       public boolean setPlayerEmail(UUID playerId, String email) {
         if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             if (logger != null) logger.warning("Rejected invalid email for " + playerId + ": " + email);
             return false;
         }
-        final String sql = """
-            INSERT INTO artificialintelligence_chatbot_mail (player_uuid, email)
-            VALUES (?, ?)
-            ON CONFLICT(player_uuid) DO UPDATE SET email = excluded.email;
-            """;
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, playerId.toString());
-            stmt.setString(2, email);
-            stmt.executeUpdate();
+        // Delete+insert to avoid dialect-specific UPSERT syntax.
+        final String del = "DELETE FROM artificialintelligence_chatbot_mail " +
+                "WHERE player_uuid = '" + escape(playerId.toString()) + "';";
+        final String ins = "INSERT INTO artificialintelligence_chatbot_mail (player_uuid, email) VALUES (" +
+                "'" + escape(playerId.toString()) + "', '" + escape(email) + "');";
+        try {
+            MCEngineArtificialIntelligenceCommon.getApi().executeQuery(del);
+            MCEngineArtificialIntelligenceCommon.getApi().executeQuery(ins);
             return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             if (logger != null) logger.warning("[ChatBotDB] SQLite set email failed: " + e.getMessage());
             return false;
         }
+    }
+
+    /** Minimal SQL string escaper for single quotes. */
+    private static String escape(String s) {
+        return s == null ? "" : s.replace("'", "''");
     }
 }

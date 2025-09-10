@@ -18,7 +18,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
-import java.sql.Connection;
 
 /**
  * Main class for the MCEngineChatBot AddOn.
@@ -66,7 +65,6 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
 
         try {
             // Initialize database for chatbot usage (emails, logs, etc.) with dialect selection
-            Connection conn = MCEngineArtificialIntelligenceCommon.getApi().getDBConnection();
             String dbType;
             try {
                 dbType = plugin.getConfig().getString("database.type", "sqlite");
@@ -75,12 +73,12 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
             }
 
             switch (dbType == null ? "sqlite" : dbType.toLowerCase()) {
-                case "mysql" -> chatBotDB = new ChatBotDBMySQL(conn, logger);
-                case "postgresql", "postgres" -> chatBotDB = new ChatBotDBPostgreSQL(conn, logger);
-                case "sqlite" -> chatBotDB = new ChatBotDBSQLite(conn, logger);
+                case "mysql" -> chatBotDB = new ChatBotDBMySQL(logger);
+                case "postgresql", "postgres" -> chatBotDB = new ChatBotDBPostgreSQL(logger);
+                case "sqlite" -> chatBotDB = new ChatBotDBSQLite(logger);
                 default -> {
                     logger.warning("Unknown database.type='" + dbType + "', defaulting to SQLite for ChatBot.");
-                    chatBotDB = new ChatBotDBSQLite(conn, logger);
+                    chatBotDB = new ChatBotDBSQLite(logger);
                 }
             }
             chatBotDB.ensureSchema();

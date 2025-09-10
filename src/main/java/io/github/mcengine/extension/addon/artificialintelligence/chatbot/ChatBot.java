@@ -8,17 +8,16 @@ import io.github.mcengine.extension.addon.artificialintelligence.chatbot.command
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.listener.ChatBotListener;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.tabcompleter.ChatBotTabCompleter;
 import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.ChatBotUtil;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db.ChatBotDB;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db.ChatBotDBMySQL;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db.ChatBotDBPostgreSQL;
-import io.github.mcengine.extension.addon.artificialintelligence.chatbot.util.db.ChatBotDBSQLite;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.ChatBotDB;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.mysql.ChatBotDBMySQL;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.postgresql.ChatBotDBPostgreSQL;
+import io.github.mcengine.extension.addon.artificialintelligence.chatbot.database.sqlite.ChatBotDBSQLite;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
-import java.sql.Connection;
 
 /**
  * Main class for the MCEngineChatBot AddOn.
@@ -66,7 +65,6 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
 
         try {
             // Initialize database for chatbot usage (emails, logs, etc.) with dialect selection
-            Connection conn = MCEngineArtificialIntelligenceCommon.getApi().getDBConnection();
             String dbType;
             try {
                 dbType = plugin.getConfig().getString("database.type", "sqlite");
@@ -75,12 +73,12 @@ public class ChatBot implements IMCEngineArtificialIntelligenceAddOn {
             }
 
             switch (dbType == null ? "sqlite" : dbType.toLowerCase()) {
-                case "mysql" -> chatBotDB = new ChatBotDBMySQL(conn, logger);
-                case "postgresql", "postgres" -> chatBotDB = new ChatBotDBPostgreSQL(conn, logger);
-                case "sqlite" -> chatBotDB = new ChatBotDBSQLite(conn, logger);
+                case "mysql" -> chatBotDB = new ChatBotDBMySQL(logger);
+                case "postgresql", "postgres" -> chatBotDB = new ChatBotDBPostgreSQL(logger);
+                case "sqlite" -> chatBotDB = new ChatBotDBSQLite(logger);
                 default -> {
                     logger.warning("Unknown database.type='" + dbType + "', defaulting to SQLite for ChatBot.");
-                    chatBotDB = new ChatBotDBSQLite(conn, logger);
+                    chatBotDB = new ChatBotDBSQLite(logger);
                 }
             }
             chatBotDB.ensureSchema();

@@ -53,9 +53,9 @@ allprojects {
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.21.8-R0.1-SNAPSHOT'
 
-    compileOnly 'io.github.mcengine:core-api:2025.0.9-27'
-    compileOnly 'io.github.mcengine:artificialintelligence-api:2025.0.9-27'
-    compileOnly 'io.github.mcengine:artificialintelligence-common:2025.0.9-27'
+    compileOnly 'io.github.mcengine:core-api:2025.0.9-28'
+    compileOnly 'io.github.mcengine:artificialintelligence-api:2025.0.9-28'
+    compileOnly 'io.github.mcengine:artificialintelligence-common:2025.0.9-28'
 
     compileOnly 'com.sun.mail:jakarta.mail:2.0.2'
 }
